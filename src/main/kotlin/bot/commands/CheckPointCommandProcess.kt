@@ -1,6 +1,7 @@
 package bot.commands
 
 import bot.Command
+import bot.RuntimeStorage
 import bot.constants.ConstantsKeyboards
 import bot.constants.ConstantsSting
 import data.Api
@@ -52,10 +53,21 @@ class CheckPointCommandProcess(
                     ConstantsSting.enterDate,
                 )
             ).first().text
-            val response = api.checkPointOnDate(it.chat.id.chatId, database, date)
-            SendTextMessage(
-                it.chat.id,
-                response.toString(),
+           api.checkPointOnDate(it.chat.id.chatId, database, date).fold(
+                onSuccess = {response->
+                    sendTextMessage(
+                        it.chat.id,
+                        response.toString(),
+                        replyMarkup = ConstantsKeyboards.checkAndAddWithOnRealtime
+                    )
+                },
+                onFailure = {error->
+                    sendTextMessage(
+                        it.chat.id,
+                        "Ошибка получения доступа, попробуйте снова добавить базу данных",
+                        replyMarkup = ConstantsKeyboards.onlyAddDatabase
+                    )
+                }
             )
         }
     }
