@@ -18,7 +18,8 @@ object ConstantsKeyboards {
             row {
                 +SimpleKeyboardButton(ConstantsSting.addDatabase)
             }
-        }
+        },
+        resizeKeyboard = true
     )
 
     val dataBaseCommands = dev.inmo.tgbotapi.types.buttons.ReplyKeyboardMarkup(
@@ -38,7 +39,8 @@ object ConstantsKeyboards {
             row{
                 +SimpleKeyboardButton(ConstantsSting.monitorCommon)
             }
-        }
+        },
+        resizeKeyboard = true
     )
 
     val checkAndAddWithOffRealtime = dev.inmo.tgbotapi.types.buttons.ReplyKeyboardMarkup(
@@ -49,7 +51,8 @@ object ConstantsKeyboards {
                 +SimpleKeyboardButton(ConstantsSting.checkPointDatetBtn)
                 +SimpleKeyboardButton(ConstantsSting.offRealTime)
             }
-        }
+        },
+        resizeKeyboard = true
     )
 
     fun getDataBasesKeyBoard(dataBases: List<String>) = dev.inmo.tgbotapi.types.buttons.ReplyKeyboardMarkup(
