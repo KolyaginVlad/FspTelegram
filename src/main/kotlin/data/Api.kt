@@ -11,6 +11,6 @@ interface Api {
         password: String
     ): Result<Unit>
 
-     suspend fun checkPoint(userId: Long, dataBase: String)
-     suspend fun checkPointOnDate(userId: Long, dataBase: String, date: String)
+     suspend fun checkPoint(userId: Long, dataBase: String): Result<Unit>
+    suspend fun checkPointOnDate(userId: Long, dataBase: String, date: String): Result<Unit>
 }

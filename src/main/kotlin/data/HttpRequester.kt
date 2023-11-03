@@ -1,5 +1,7 @@
 package data
 
+import data.models.CheckPointDto
+import data.models.CheckPointOnDateDto
 import data.models.ConfigExportDto
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -24,19 +26,45 @@ class HttpRequester(private val client: HttpClient) : Api {
             it.printStackTrace()
         }.getOrNull()
         println("sendConfig ${response?.status?.value}")
-        return if(response?.status?.value in 200..299) {
+        return if (response?.status?.value in 200..299) {
             Result.success(Unit)
         } else {
             Result.failure(Exception())
         }
     }
 
-    override suspend fun checkPoint(userId: Long, dataBase: String) {
-        TODO("Not yet implemented")
+    override suspend fun checkPoint(userId: Long, dataBase: String): Result<Unit> {
+        val response = runCatching {
+            client.post("TODO()") {  //TODO
+                contentType(ContentType.Application.Json)
+                setBody(CheckPointDto(userId, dataBase))
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrNull()
+        println("sendConfig ${response?.status?.value}")
+        return if (response?.status?.value in 200..299) {
+            Result.success(Unit)
+        } else {
+            Result.failure(Exception())
+        }
     }
 
-    override suspend fun checkPointOnDate(userId: Long, dataBase: String, date: String) {
-        TODO("Not yet implemented")
+    override suspend fun checkPointOnDate(userId: Long, dataBase: String, date: String): Result<Unit> {
+        val response = runCatching {
+            client.post("TODO()") { //TODO
+                contentType(ContentType.Application.Json)
+                setBody(CheckPointOnDateDto(userId, dataBase, date))
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrNull()
+        println("sendConfig ${response?.status?.value}")
+        return if (response?.status?.value in 200..299) {
+            Result.success(Unit)
+        } else {
+            Result.failure(Exception())
+        }
     }
 
 
