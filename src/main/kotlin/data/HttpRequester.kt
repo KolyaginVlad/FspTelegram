@@ -31,5 +31,13 @@ class HttpRequester(private val client: HttpClient) : Api {
         }
     }
 
+    override suspend fun checkPoint(userId: Long, dataBase: String) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun checkPointOnDate(userId: Long, dataBase: String, date: String) {
+        TODO("Not yet implemented")
+    }
+
 
 }

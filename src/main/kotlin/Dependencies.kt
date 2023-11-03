@@ -1,3 +1,4 @@
+import bot.CheckPointCommandProcess
 import bot.StartCommandProcess
 import data.Api
 import data.HttpRequester
@@ -20,6 +21,8 @@ object Dependencies {
         bindSingleton { CoroutineScope(Dispatchers.IO + SupervisorJob()) }
 
         bindSingleton { StartCommandProcess(instance()) }
+
+        bindSingleton { CheckPointCommandProcess(instance()) }
 
         bindSingleton {
             HttpClient(CIO) {

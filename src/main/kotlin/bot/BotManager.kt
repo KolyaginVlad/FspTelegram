@@ -10,6 +10,7 @@ import org.kodein.di.instance
 
 class BotManager {
     private val startCommandProcess: StartCommandProcess by Dependencies.di.instance()
+    private val checkPointProcess: CheckPointCommandProcess by  Dependencies.di.instance()
     private val scope: CoroutineScope by Dependencies.di.instance()
 
     init {
@@ -18,6 +19,7 @@ class BotManager {
             bot.buildBehaviourWithLongPolling {
                 println(getMe())
                 startCommandProcess.start(this)
+                checkPointProcess.start(this)
             }.join()
         }
     }
