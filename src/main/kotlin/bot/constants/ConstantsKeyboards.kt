@@ -65,6 +65,7 @@ object ConstantsKeyboards {
             row {
                 +SimpleKeyboardButton(ConstantsSting.addDatabase)
             }
-        }
+        },
+        resizeKeyboard = true
     )
 }

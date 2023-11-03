@@ -23,7 +23,7 @@ class AddDataBaseCommandProcess(
             val host = waitText(
                 SendTextMessage(
                     info.chat.id,
-                    "Приветствую! Добавьте вашу первую базу данных для начала работы. Введите host",
+                    "Введите host",
                 )
             ).first().text
             val port = waitText(
