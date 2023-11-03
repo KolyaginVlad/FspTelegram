@@ -29,6 +29,8 @@ object Dependencies {
 
         bindSingleton { OffCheckPointRealtimeCommandsProcess() }
 
+        bindSingleton { ProcessInlineButtons() }
+
         bindSingleton {
             HttpClient(CIO) {
                 install(ContentNegotiation) {

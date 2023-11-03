@@ -16,6 +16,7 @@ class BotManager {
     private val offCheckPointProcess: OffCheckPointRealtimeCommandsProcess by Dependencies.di.instance()
     private val scope: CoroutineScope by Dependencies.di.instance()
     private val addDataBaseCommandProcess: AddDataBaseCommandProcess by Dependencies.di.instance()
+    private val processInlineButtons: ProcessInlineButtons by Dependencies.di.instance()
 
     init {
         val bot = telegramBot("6597360611:AAFZQQfRVjVkOZAT1_Ux6z9atoCHeWNFqmo")
@@ -27,6 +28,7 @@ class BotManager {
                 onCheckPointProcess.start(this)
                 offCheckPointProcess.start(this)
                 addDataBaseCommandProcess.start(this)
+                processInlineButtons.start(this)
             }.join()
         }
     }

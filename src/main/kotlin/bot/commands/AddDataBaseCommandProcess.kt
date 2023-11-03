@@ -1,7 +1,6 @@
 package bot.commands
 
 import bot.Command
-import bot.RuntimeStorage
 import bot.constants.ConstantsKeyboards
 import bot.constants.ConstantsSting
 import data.Api
@@ -24,6 +23,7 @@ class AddDataBaseCommandProcess(
                 SendTextMessage(
                     info.chat.id,
                     "Введите host",
+                    replyMarkup = ConstantsKeyboards.getLogInlineKeyboard("some")
                 )
             ).first().text
             val port = waitText(
