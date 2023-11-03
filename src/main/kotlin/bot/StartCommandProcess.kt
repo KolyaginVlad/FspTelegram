@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.first
 
 class StartCommandProcess(
     private val api: Api
-): Command {
+) : Command {
     override suspend fun BehaviourContext.process() {
         onCommand("start") { info ->
 
@@ -47,12 +47,17 @@ class StartCommandProcess(
             sendTextMessage(info.chat, "Подождите, пробуем получить доступ...")
             api.sendConfig(info.chat.id.chatId, host, port, database, username, password).fold(
                 onSuccess = {
-                    sendTextMessage(info.chat, "Доступ успешно получен")
+                    sendTextMessage(
+                        info.chat,
+                        "Доступ успешно получен",
+                        replyMarkup = ConstantsKeyboards.checkAndAddWithOnRealtime
+                    )
                 },
                 onFailure = {
                     sendTextMessage(
                         info.chat,
-                        "Ошибка получения доступа, попробуйте снова добавить базу данных командой /addDatabase"
+                        "Ошибка получения доступа, попробуйте снова добавить базу данных",
+                        replyMarkup = ConstantsKeyboards.onlyAddDatabase
                     )
                 }
             )
