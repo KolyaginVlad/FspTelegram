@@ -2,100 +2,63 @@ package bot
 
 import Dependencies
 import data.HttpRequester
-import com.github.kotlintelegrambot.bot
-import com.github.kotlintelegrambot.dispatch
-import com.github.kotlintelegrambot.dispatcher.*
-import com.github.kotlintelegrambot.entities.ChatId
-import com.github.kotlintelegrambot.entities.KeyboardReplyMarkup
-import com.github.kotlintelegrambot.entities.keyboard.KeyboardButton
-import com.github.kotlintelegrambot.extensions.filters.Filter
+import dev.inmo.tgbotapi.bot.ktor.telegramBot
+import dev.inmo.tgbotapi.extensions.api.bot.getMe
+import dev.inmo.tgbotapi.extensions.api.send.media.sendPhoto
+import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
+import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitPhoto
+import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
+import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
+import dev.inmo.tgbotapi.requests.send.SendTextMessage
+import dev.inmo.tgbotapi.types.buttons.SimpleKeyboardButton
+import dev.inmo.tgbotapi.utils.buildEntities
+import dev.inmo.tgbotapi.utils.matrix
+import dev.inmo.tgbotapi.utils.regular
+import dev.inmo.tgbotapi.utils.row
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import org.kodein.di.instance
 
 class BotManager {
-    private val buttons = listOf(
-        listOf(KeyboardButton(ConstantsSting.firstButton)),
-        listOf(KeyboardButton("Request contact")),
-    )
     private val httpRequester: HttpRequester by Dependencies.di.instance()
     private val scope: CoroutineScope by Dependencies.di.instance()
 
     init {
-        val bot = bot {
-            token = "6597360611:AAFZQQfRVjVkOZAT1_Ux6z9atoCHeWNFqmo"
-            dispatch {
-                message(Filter.Reply) {
-                    bot.sendMessage(chatId = ChatId.fromId(message.chat.id), text = update.message?.text.toString())
-                }
-                command("start") {
-                    val keyboardMarkup = KeyboardReplyMarkup(keyboard = buttons, resizeKeyboard = true)
-                    bot.sendMessage(
-                        chatId = ChatId.fromId(message.chat.id),
-                        text = ConstantsSting.startMsg,
-                        replyMarkup = keyboardMarkup,
-                    ).fold(
-                        ifSuccess = { RuntimeStorage.userIdList.add(it.chat.id) },
-                        ifError = { bot.sendMessage(chatId = ChatId.fromId(message.chat.id), text = ConstantsSting.errorMsg) }
-                    )
-                }
-                telegramError {
-                    RuntimeStorage.userIdList.forEach {
-                        bot.sendMessage(chatId = ChatId.fromId(it), text = ConstantsSting.errorMsg)
+        val bot = telegramBot("6597360611:AAFZQQfRVjVkOZAT1_Ux6z9atoCHeWNFqmo")
+        scope.launch {
+            bot.buildBehaviourWithLongPolling {
+                println(getMe())
+
+                val nameReplyMarkup = dev.inmo.tgbotapi.types.buttons.ReplyKeyboardMarkup(
+                    matrix {
+                        row {
+                            +SimpleKeyboardButton("nope")
+                        }
                     }
-                }
-                text(ConstantsSting.firstButton){
-                    bot.sendMessage(
-                        chatId = ChatId.fromId(message.chat.id),
-                        text ="Hui",
-                    )
-                    text {
-                        bot.sendMessage(
-                            chatId = ChatId.fromId(message.chat.id),
-                            text ="Understand",
+                )
+                onCommand("start") {
+                    val photo = waitPhoto(
+                        SendTextMessage(it.chat.id, "Send me your photo please")
+                    ).first()
+
+                    val name = waitText(
+                        SendTextMessage(
+                            it.chat.id,
+                            "Send me your name or choose \"nope\"",
+                            replyMarkup = nameReplyMarkup
                         )
-                    }
-                }
-            }
-        }
-        bot.startPolling()
-    }
-}
-/* import com.github.kotlintelegrambot.bot
-import com.github.kotlintelegrambot.dispatch
-import com.github.kotlintelegrambot.dispatcher.command
-import com.github.kotlintelegrambot.dispatcher.pollAnswer
-import com.github.kotlintelegrambot.entities.ChatId
-import com.github.kotlintelegrambot.entities.InlineKeyboardMarkup
-import com.github.kotlintelegrambot.entities.KeyboardReplyMarkup
-import com.github.kotlintelegrambot.entities.keyboard.InlineKeyboardButton
-import com.github.kotlintelegrambot.entities.keyboard.KeyboardButton
+                    ).first().text.takeIf { it != "nope" }
 
-fun main() {
-    val bot = bot {
-        token = "6597360611:AAFZQQfRVjVkOZAT1_Ux6z9atoCHeWNFqmo"
-        dispatch {
-            command("start") {
-                val keyboardMarkup = KeyboardReplyMarkup(keyboard = generateUsersButton(), resizeKeyboard = true)
-                bot.sendMessage(
-                    chatId = ChatId.fromId(message.chat.id),
-                    text = "Hello, inline buttons!",
-                    replyMarkup = keyboardMarkup,
-                ).fold{
-
+                    sendPhoto(
+                        it.chat,
+                        photo.mediaCollection,
+                        entities = buildEntities {
+                            if (name != null) regular(name) // may be collapsed up to name ?.let(::regular)
+                        }
+                    )
                 }
-            }
-            command("enter_server_data") {
-                bot.sendMessage(chatId = ChatId.fromId(message.chat.id), text = "Enter server data!")
-                bot.sendMessage(chatId = ChatId.fromId(message.chat.id), text = this.toString())
-            }
+            }.join()
         }
     }
-    bot.startPolling()
 }
-
-fun generateUsersButton(): List<List<KeyboardButton>> {
-    return listOf(
-        listOf(KeyboardButton("Request location (not supported on desktop)", requestLocation = true)),
-        listOf(KeyboardButton("Request contact", requestContact = true)),
-    )
-}*/

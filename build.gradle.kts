@@ -17,7 +17,7 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation("org.kodein.di:kodein-di:7.19.0")
     implementation("io.ktor:ktor-client-core:2.3.5")
-    implementation ("io.github.kotlin-telegram-bot.kotlin-telegram-bot:telegram:6.1.0")
+    implementation("dev.inmo:tgbotapi:9.2.4")
 }
 
 tasks.test {
@@ -25,7 +25,7 @@ tasks.test {
 }
 
 kotlin {
-    jvmToolchain(8)
+    jvmToolchain(18)
 }
 
 application {
