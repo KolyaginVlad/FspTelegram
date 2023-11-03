@@ -1,3 +1,4 @@
+import bot.StartCommandProcess
 import data.Api
 import data.HttpRequester
 import io.ktor.client.*
@@ -17,6 +18,8 @@ object Dependencies {
         bindSingleton<Api> { HttpRequester(instance()) }
 
         bindSingleton { CoroutineScope(Dispatchers.IO + SupervisorJob()) }
+
+        bindSingleton { StartCommandProcess(instance()) }
 
         bindSingleton {
             HttpClient(CIO) {
