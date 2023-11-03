@@ -1,8 +1,9 @@
 package bot.commands
 
 import bot.Command
-import bot.constants.ConstantsSting
 import bot.RuntimeStorage
+import bot.constants.ConstantsKeyboards
+import bot.constants.ConstantsSting
 import data.Api
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
@@ -24,7 +25,8 @@ class OnCheckPointRealtimeCommandProcess(
                 SendTextMessage(
                     it.chat.id,
                     ConstantsSting.enterDb,
-                )
+                    replyMarkup = ConstantsKeyboards.checkAndAddWithOffRealtime
+                ),
             ).first().text
             launch {
                 while (RuntimeStorage.userRealtimeMap[it.chat.id.chatId] == true) {

@@ -2,6 +2,8 @@ package bot
 
 import Dependencies
 import bot.commands.CheckPointCommandProcess
+import bot.commands.OffCheckPointRealtimeCommandsProcess
+import bot.commands.OnCheckPointRealtimeCommandProcess
 import bot.commands.StartCommandProcess
 import dev.inmo.tgbotapi.bot.ktor.telegramBot
 import dev.inmo.tgbotapi.extensions.api.bot.getMe
@@ -13,6 +15,8 @@ import org.kodein.di.instance
 class BotManager {
     private val startCommandProcess: StartCommandProcess by Dependencies.di.instance()
     private val checkPointProcess: CheckPointCommandProcess by  Dependencies.di.instance()
+    private val onCheckPointProcess: OnCheckPointRealtimeCommandProcess by  Dependencies.di.instance()
+    private val offCheckPointProcess: OffCheckPointRealtimeCommandsProcess by  Dependencies.di.instance()
     private val scope: CoroutineScope by Dependencies.di.instance()
 
     init {
@@ -22,6 +26,8 @@ class BotManager {
                 println(getMe())
                 startCommandProcess.start(this)
                 checkPointProcess.start(this)
+                onCheckPointProcess.start(this)
+                offCheckPointProcess.start(this)
             }.join()
         }
     }
