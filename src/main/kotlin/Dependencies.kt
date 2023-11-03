@@ -1,4 +1,6 @@
 import bot.commands.CheckPointCommandProcess
+import bot.commands.OffCheckPointRealtimeCommandsProcess
+import bot.commands.OnCheckPointRealtimeCommandProcess
 import bot.commands.StartCommandProcess
 import data.Api
 import data.HttpRequester
@@ -23,6 +25,10 @@ object Dependencies {
         bindSingleton { StartCommandProcess(instance()) }
 
         bindSingleton { CheckPointCommandProcess(instance()) }
+
+        bindSingleton { OnCheckPointRealtimeCommandProcess(instance()) }
+
+        bindSingleton { OffCheckPointRealtimeCommandsProcess() }
 
         bindSingleton {
             HttpClient(CIO) {
