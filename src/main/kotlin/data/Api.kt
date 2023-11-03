@@ -1,5 +1,8 @@
 package data
 
+import data.models.DataBaseResponseDto
+
+
 interface Api {
 
     suspend fun sendConfig(
@@ -13,4 +16,6 @@ interface Api {
 
      suspend fun checkPoint(userId: Long, dataBase: String): Result<Unit>
     suspend fun checkPointOnDate(userId: Long, dataBase: String, date: String): Result<Unit>
+
+    suspend fun getDataBaseList(userId: Long):Result<List<DataBaseResponseDto>>
 }

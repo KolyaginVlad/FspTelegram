@@ -1,9 +1,8 @@
 package data
 
-import data.models.CheckPointDto
-import data.models.CheckPointOnDateDto
-import data.models.ConfigExportDto
+import data.models.*
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 
@@ -67,5 +66,28 @@ class HttpRequester(private val client: HttpClient) : Api {
         }
     }
 
-
+    override suspend fun getDataBaseList(userId: Long): Result<List<DataBaseResponseDto>> {
+        val response = runCatching {
+            client.get(getDataBaseListRoot.plus("/$userId")) { //TODO
+                contentType(ContentType.Application.Json)
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrNull()
+        println("sendConfig ${response?.status?.value}")
+        return if (response?.status?.value in 200..299 && response != null) {
+            Result.success(response.body())
+        } else {
+            //Result.failure(Exception())
+            Result.success(
+                listOf(
+                    DataBaseResponseDto("db"),
+                    DataBaseResponseDto("db2"),
+                    DataBaseResponseDto("db3")
+                )
+            )
+        }
+    }
 }
+
+const val getDataBaseListRoot = "TODO()"

@@ -12,12 +12,12 @@ class OffCheckPointRealtimeCommandsProcess : Command {
     override suspend fun BehaviourContext.process() {
         onText({
             it.content.text == ConstantsSting.onRealTime
-        }) {
-            RuntimeStorage.userRealtimeMap[it.chat.id.chatId] = false
+        }) { info ->
+            RuntimeStorage.userRealtimeMap[info.chat.id.chatId]= false
             sendTextMessage(
-                it.chat,
+                info.chat,
                 ConstantsSting.realtimeOff,
-                replyMarkup = ConstantsKeyboards.checkAndAddWithOnRealtime
+                replyMarkup = ConstantsKeyboards.dataBaseCommands
             )
         }
     }

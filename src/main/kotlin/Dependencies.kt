@@ -1,7 +1,4 @@
-import bot.commands.CheckPointCommandProcess
-import bot.commands.OffCheckPointRealtimeCommandsProcess
-import bot.commands.OnCheckPointRealtimeCommandProcess
-import bot.commands.StartCommandProcess
+import bot.commands.*
 import data.Api
 import data.HttpRequester
 import io.ktor.client.*
@@ -25,6 +22,8 @@ object Dependencies {
         bindSingleton { StartCommandProcess(instance()) }
 
         bindSingleton { CheckPointCommandProcess(instance()) }
+
+        bindSingleton { AddDataBaseCommandProcess(instance()) }
 
         bindSingleton { OnCheckPointRealtimeCommandProcess(instance()) }
 
