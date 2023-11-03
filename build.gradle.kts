@@ -12,6 +12,8 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    runtimeOnly("org.kodein.di:kodein-di:7.18.0")
+    implementation("io.ktor:ktor-client-core:2.3.5")
 }
 
 tasks.test {
