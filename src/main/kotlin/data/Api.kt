@@ -2,5 +2,15 @@ package data
 
 interface Api {
 
-    suspend fun sendConfig(host: String, port: String, database: String, username: String, password: String)
+    suspend fun sendConfig(
+        userId: Long,
+        host: String,
+        port: String,
+        database: String,
+        username: String,
+        password: String
+    ): Result<Unit>
+
+
+
 }

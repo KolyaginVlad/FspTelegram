@@ -1,18 +1,34 @@
+import data.Api
 import data.HttpRequester
 import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.serialization.json.Json
 import org.kodein.di.DI
 import org.kodein.di.bindSingleton
 import org.kodein.di.instance
 
 object Dependencies {
     val di = DI {
-        bindSingleton { HttpRequester(instance()) }
+        bindSingleton<Api> { HttpRequester(instance()) }
 
         bindSingleton { CoroutineScope(Dispatchers.IO + SupervisorJob()) }
 
-        bindSingleton { HttpClient() }
+        bindSingleton {
+            HttpClient(CIO) {
+                install(ContentNegotiation) {
+                    json(
+                        Json {
+                            ignoreUnknownKeys = true
+                            encodeDefaults = true
+                        }
+                    )
+                }
+            }
+        }
     }
 }

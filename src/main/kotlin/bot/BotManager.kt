@@ -1,29 +1,21 @@
 package bot
 
 import Dependencies
-import data.HttpRequester
+import data.Api
 import dev.inmo.tgbotapi.bot.ktor.telegramBot
 import dev.inmo.tgbotapi.extensions.api.bot.getMe
-import dev.inmo.tgbotapi.extensions.api.send.media.sendPhoto
+import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
-import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitPhoto
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
-import dev.inmo.tgbotapi.extensions.utils.types.buttons.ReplyKeyboardMarkup
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
-import dev.inmo.tgbotapi.types.buttons.SimpleKeyboardButton
-import dev.inmo.tgbotapi.utils.buildEntities
-import dev.inmo.tgbotapi.utils.matrix
-import dev.inmo.tgbotapi.utils.regular
-import dev.inmo.tgbotapi.utils.row
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.kodein.di.instance
 
 class BotManager {
-    private val httpRequester: HttpRequester by Dependencies.di.instance()
+    private val api: Api by Dependencies.di.instance()
     private val scope: CoroutineScope by Dependencies.di.instance()
 
     init {
@@ -32,31 +24,48 @@ class BotManager {
             bot.buildBehaviourWithLongPolling {
                 println(getMe())
 
-                val nameReplyMarkup = dev.inmo.tgbotapi.types.buttons.ReplyKeyboardMarkup(
-                    matrix {
-                        row {
-                            +SimpleKeyboardButton("nope")
-                        }
-                    }
-                )
-                onCommand("start") {
-                    val photo = waitPhoto(
-                        SendTextMessage(it.chat.id, "Send me your photo please")
-                    ).first()
+                onCommand("start") { info ->
 
-                    val name = waitText(
+                    val host = waitText(
                         SendTextMessage(
-                            it.chat.id,
-                            "Send me your name or choose \"nope\"",
-                            replyMarkup = nameReplyMarkup
+                            info.chat.id,
+                            "Приветствую! Добавьте вашу первую базу данных для начала работы. Введите host",
                         )
-                    ).first().text.takeIf { it != "nope" }
-
-                    sendPhoto(
-                        it.chat,
-                        photo.mediaCollection,
-                        entities = buildEntities {
-                            if (name != null) regular(name) // may be collapsed up to name ?.let(::regular)
+                    ).first().text
+                    val port = waitText(
+                        SendTextMessage(
+                            info.chat.id,
+                            "Введите port",
+                        )
+                    ).first().text
+                    val database = waitText(
+                        SendTextMessage(
+                            info.chat.id,
+                            "Введите имя базы данных",
+                        )
+                    ).first().text
+                    val username = waitText(
+                        SendTextMessage(
+                            info.chat.id,
+                            "Введите username для подключения к базе данных",
+                        )
+                    ).first().text
+                    val password = waitText(
+                        SendTextMessage(
+                            info.chat.id,
+                            "Введите password для подключения к базе данных",
+                        )
+                    ).first().text
+                    sendTextMessage(info.chat, "Подождите, пробуем получить доступ...")
+                    api.sendConfig(info.chat.id.chatId, host, port, database, username, password).fold(
+                        onSuccess = {
+                            sendTextMessage(info.chat, "Доступ успешно получен")
+                        },
+                        onFailure = {
+                            sendTextMessage(
+                                info.chat,
+                                "Ошибка получения доступа, попробуйте снова добавить базу данных командой /addDatabase"
+                            )
                         }
                     )
                 }
