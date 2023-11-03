@@ -16,8 +16,8 @@ class AddDataBaseCommandProcess(
     private val api: Api
 ) : Command {
     override suspend fun BehaviourContext.process() {
-        onText({
-            it.content.text == ConstantsSting.addDatabase
+        onText({info->
+            info.content.text == ConstantsSting.addDatabase
         }) { info ->
 
             val host = waitText(
@@ -63,7 +63,9 @@ class AddDataBaseCommandProcess(
                     sendTextMessage(
                         info.chat,
                         "Ошибка получения доступа, попробуйте снова добавить базу данных",
-                        replyMarkup = ConstantsKeyboards.onlyAddDatabase
+                        replyMarkup = ConstantsKeyboards.getDataBasesKeyBoard(
+                            api.getDataBaseList(info.chat.id.chatId).fold(onSuccess = { it.map { it.name } }, onFailure = { listOf() })
+                        )
                     )
                 }
             )
