@@ -1,6 +1,7 @@
 package bot.constants
 
 object ConstantsSting {
+    const val showSolution = "Показать решение"
     const val realtimeOff = "Отображение статуса realtime выключено"
     const val addDatabase = "Добавить базу данных"
     const val onRealTime = "Мониторинг выбранной базы"

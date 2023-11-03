@@ -1,5 +1,7 @@
 package bot.constants
 
+import dev.inmo.tgbotapi.extensions.utils.types.buttons.dataButton
+import dev.inmo.tgbotapi.extensions.utils.types.buttons.inlineKeyboard
 import dev.inmo.tgbotapi.types.buttons.SimpleKeyboardButton
 import dev.inmo.tgbotapi.utils.matrix
 import dev.inmo.tgbotapi.utils.row
@@ -68,4 +70,10 @@ object ConstantsKeyboards {
         },
         resizeKeyboard = true
     )
+
+    fun getLogInlineKeyboard(data: String) = inlineKeyboard {
+        row {
+            dataButton(ConstantsSting.showSolution, data)
+        }
+    }
 }
