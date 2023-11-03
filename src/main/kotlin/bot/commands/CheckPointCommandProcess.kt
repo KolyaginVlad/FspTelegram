@@ -1,9 +1,14 @@
-package bot
+package bot.commands
 
+import bot.Command
+import bot.constants.ConstantsKeyboards
+import bot.constants.ConstantsSting
 import data.Api
+import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
+import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onText
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import kotlinx.coroutines.flow.first
 
@@ -11,11 +16,14 @@ class CheckPointCommandProcess(
     private val api: Api
 ) : Command {
     override suspend fun BehaviourContext.process() {
-        onCommand(ConstantsSting.checkPointBtn) {
+        onText({
+            it.content.text == ConstantsSting.checkPointBtn
+        }) {
             val database = waitText(
                 SendTextMessage(
                     it.chat.id,
                     ConstantsSting.enterDb,
+                    replyMarkup = ConstantsKeyboards.empty
                 )
             ).first().text
             val date = waitText(
@@ -24,10 +32,11 @@ class CheckPointCommandProcess(
                     ConstantsSting.enterDate,
                 )
             ).first().text
-           val response = api.checkPointOnDate( it.chat.id.chatId, database,date)
-            SendTextMessage(
+            val response = api.checkPointOnDate(it.chat.id.chatId, database, date)
+            sendTextMessage(
                 it.chat.id,
                 response.toString(),
+                replyMarkup = ConstantsKeyboards.checkAndAddWithOnRealtime
             )
         }
         onCommand(ConstantsSting.checkPoinDatetBtn) {
@@ -43,7 +52,7 @@ class CheckPointCommandProcess(
                     ConstantsSting.enterDate,
                 )
             ).first().text
-            val response = api.checkPointOnDate( it.chat.id.chatId, database,date)
+            val response = api.checkPointOnDate(it.chat.id.chatId, database, date)
             SendTextMessage(
                 it.chat.id,
                 response.toString(),

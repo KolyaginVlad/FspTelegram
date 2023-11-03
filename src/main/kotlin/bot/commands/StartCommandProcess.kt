@@ -1,5 +1,8 @@
-package bot
+package bot.commands
 
+import bot.Command
+import bot.constants.ConstantsKeyboards
+import bot.RuntimeStorage
 import data.Api
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
@@ -47,6 +50,7 @@ class StartCommandProcess(
             sendTextMessage(info.chat, "Подождите, пробуем получить доступ...")
             api.sendConfig(info.chat.id.chatId, host, port, database, username, password).fold(
                 onSuccess = {
+                    RuntimeStorage.userRealtimeMap[info.chat.id.chatId] = false
                     sendTextMessage(
                         info.chat,
                         "Доступ успешно получен",

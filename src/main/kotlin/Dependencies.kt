@@ -1,5 +1,5 @@
-import bot.CheckPointCommandProcess
-import bot.StartCommandProcess
+import bot.commands.CheckPointCommandProcess
+import bot.commands.StartCommandProcess
 import data.Api
 import data.HttpRequester
 import io.ktor.client.*

@@ -1,6 +1,8 @@
 package bot
 
 import Dependencies
+import bot.commands.CheckPointCommandProcess
+import bot.commands.StartCommandProcess
 import dev.inmo.tgbotapi.bot.ktor.telegramBot
 import dev.inmo.tgbotapi.extensions.api.bot.getMe
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling

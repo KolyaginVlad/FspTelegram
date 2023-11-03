@@ -1,7 +1,7 @@
 package bot
 
-import java.util.Collections
+import java.util.*
 
 object RuntimeStorage {
-    val userIdList = Collections.synchronizedList(mutableListOf<Long>())
+    val userRealtimeMap = Collections.synchronizedMap(mutableMapOf<Long, Boolean>())
 }
