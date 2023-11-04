@@ -37,7 +37,7 @@ suspend fun Result<Unit>.foldMsg(context: BehaviourContext, data: MessageDataCal
     onSuccess = { response ->
         context.sendTextMessage(
             data.message.chat.id,
-            "Процесс был завершён",
+            "Операция выполнена",
             replyMarkup = ConstantsKeyboards.getDataBasesCommands(dataBase)
         )
     },

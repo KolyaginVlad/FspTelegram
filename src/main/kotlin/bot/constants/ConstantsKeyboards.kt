@@ -47,7 +47,7 @@ object ConstantsKeyboards {
         }
         row {
             dataButton(
-                ConstantsSting.monitorCommon,
+                ConstantsSting.vacuumClean,
                 ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "7"
             )
         }

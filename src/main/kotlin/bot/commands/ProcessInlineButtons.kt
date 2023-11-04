@@ -51,7 +51,7 @@ class ProcessInlineButtons(private val api: Api) : Command {
 
                 ButtonType.REPAIR -> {}
 
-                ButtonType.BACK -> BACK(args[2], this, message)
+                ButtonType.BACK -> BACK(args[3], this, message)
 
                 ButtonType.MAIN_OPTIONS -> TODO()
                 ButtonType.ADD_DB -> addDataBaseCommandProcess.addDataBase(
@@ -106,7 +106,6 @@ class ProcessInlineButtons(private val api: Api) : Command {
                     )
                 )
             }
-
             else -> {}
         }
     }
