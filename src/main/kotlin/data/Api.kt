@@ -1,7 +1,10 @@
 package data
 
 import bot.constants.ConstantsKeyboards
-import data.models.*
+import data.models.CheckPointDto
+import data.models.DataBaseResponseDto
+import data.models.MetrixDto
+import data.models.VacuumDto
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
@@ -30,9 +33,9 @@ interface Api {
 
     suspend fun vacuum(userId: Long, dataBase: String): Result<VacuumDto>
 
-    suspend fun link(userId: Long): Result<String>
+    suspend fun link(userId: Long, database: String): Result<List<String>>
 
-    suspend fun visual(link: String): Result<String>
+    suspend fun visual(userId: Long, database: String, link: String): Result<String>
 
     suspend fun connectBySsh(userId: Long, ssh: String): Result<Unit>
 
@@ -51,6 +54,8 @@ interface Api {
         userId: Long,
         dataBase: String,
     ): Result<MemoryDto>
+
+    suspend fun createUrl(name: String, url: String, chatId: Long, database: String): Result<Unit>
 
 }
 
