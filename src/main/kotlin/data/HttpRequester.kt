@@ -1,6 +1,9 @@
 package data
 
-import data.models.*
+import data.models.CheckPointOnDateDto
+import data.models.ConfigExportDto
+import data.models.DataBaseResponseDto
+import data.models.GetListDatabaseDto
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -35,14 +38,14 @@ class HttpRequester(private val client: HttpClient) : Api {
 
     override suspend fun checkPoint(userId: Long, dataBase: String): Result<Unit> {
         val response = runCatching {
-            client.post("TODO()") {  //TODO
+            client.get("${BASE_URL}Activity/get-error-status/$dataBase") {  //TODO
                 contentType(ContentType.Application.Json)
-                setBody(CheckPointDto(userId, dataBase))
+//                setBody(CheckPointDto(userId, dataBase))
             }
         }.onFailure {
             it.printStackTrace()
         }.getOrNull()
-        println("sendConfig ${response?.status?.value}")
+        println("checkPoint ${response?.status?.value}")
         return if (response?.status?.value in 200..299) {
             Result.success(Unit)
         } else {

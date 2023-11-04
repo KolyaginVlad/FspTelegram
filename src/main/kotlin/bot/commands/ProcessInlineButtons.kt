@@ -2,11 +2,8 @@ package bot.commands
 
 import Dependencies
 import bot.Command
-import bot.RuntimeStorage
-import bot.User
 import bot.constants.ButtonType
 import bot.constants.ConstantsKeyboards
-import bot.constants.ConstantsSting
 import bot.constants.toButtonType
 import dev.inmo.tgbotapi.extensions.api.answers.answer
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
@@ -25,32 +22,34 @@ class ProcessInlineButtons : Command {
 
     override suspend fun BehaviourContext.process() {
         onMessageDataCallbackQuery { message ->
-            val args = message.data.split(" ")
+            val args = message.data.split("&")
             println(args[0].toButtonType())
             when (args[0].toButtonType()) {
                 ButtonType.SELECT_DATABASE -> {
-                    message.message.chat.id.takeIf { id ->
-                        RuntimeStorage.userData.none { it.id == id.chatId }
-                    }?.let { id -> RuntimeStorage.userData.add(User(id.chatId, args[1])) }
+//                    message.message.chat.id.takeIf { id ->
+//                        RuntimeStorage.userData.none { it.id == id.chatId }
+//                    }?.let { id -> RuntimeStorage.userData.add(User(id.chatId, args[1])) }
 
                     //RuntimeStorage.userData.first { it.id == message.message.chat.id.chatId }.currentDb = args[1]
                         // todo добавить
-                    println(RuntimeStorage.userData)
+//                    println(RuntimeStorage.userData)
                     sendTextMessage( // Todo Не открывается
-                        message.message.chat,
+                        message.message.chat.id,
                         "Выберите действие",
-                        replyMarkup = ConstantsKeyboards.dataBaseCommands
+                        replyMarkup = ConstantsKeyboards.getDataBasesCommands(args[1])
                     )
                 }
 
-                ButtonType.DB_OPTIONS -> RuntimeStorage.userData.find { user -> user.id == message.message.chat.id.threadId }?.let { it1 ->
+                ButtonType.DB_OPTIONS -> {
+                    println(args[2])
                     DB_OPTIONS(
+                        args[2],
                         args[1],
-                        it1.currentDb,
                         message.message.chat.id,
                         this
                     )
                 }
+
 
                 ButtonType.BACK -> TODO()
                 ButtonType.MAIN_OPTIONS -> TODO()
@@ -62,11 +61,11 @@ class ProcessInlineButtons : Command {
     }
 
     fun DB_OPTIONS(method: String, dataBase: String, chatId: IdChatIdentifier, context: BehaviourContext) = when (method) {
-        ConstantsSting.checkPointBtn -> checkPointProcess.checkPoint(chatId, dataBase, context)
-        ConstantsSting.checkPointDatetBtn -> checkPointProcess.checkPointDate(chatId, dataBase, context)
-        ConstantsSting.onRealTime -> TODO()
-        ConstantsSting.backBtn -> TODO()
-        ConstantsSting.monitorCommon -> TODO()
+        "1" -> checkPointProcess.checkPoint(chatId, dataBase, context)
+        "2" -> checkPointProcess.checkPointDate(chatId, dataBase, context)
+        "3" -> TODO()
+        "4" -> TODO()
+        "5" -> TODO()
         else -> {}
     }
 

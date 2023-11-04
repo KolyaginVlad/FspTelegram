@@ -30,6 +30,7 @@ class StartCommandProcess(
                         consumer.poll(400.milliseconds.toJavaDuration()).map { java.lang.String(it.value()) }
                             .firstOrNull()
                     }
+                    println(message.toString() + "${info.chat}")
                     sendTextMessage(info.chat, "$message")
                 }
             }

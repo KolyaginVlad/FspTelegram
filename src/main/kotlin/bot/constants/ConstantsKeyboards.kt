@@ -18,21 +18,21 @@ object ConstantsKeyboards {
         row { dataButton(ConstantsSting.addDatabase, ButtonType.ADD_DB.toString()) }
     }
 
-    val dataBaseCommands = inlineKeyboard {
+    fun getDataBasesCommands(dataBase: String) = inlineKeyboard {
         row {
-            dataButton(ConstantsSting.checkPointBtn, ButtonType.DB_OPTIONS.toString() + " " + ConstantsSting.checkPointBtn)
+            dataButton(ConstantsSting.checkPointBtn, ButtonType.DB_OPTIONS.toString() + "&" + dataBase +"&1")
         }
         row {
-            dataButton(ConstantsSting.checkPointDatetBtn, ButtonType.DB_OPTIONS.toString() + " " + ConstantsSting.checkPointDatetBtn)
+            dataButton(ConstantsSting.checkPointDatetBtn, ButtonType.DB_OPTIONS.toString() + "&" + dataBase +"&2")
         }
         row {
-            dataButton(ConstantsSting.onRealTime, ButtonType.DB_OPTIONS.toString() + " " + ConstantsSting.onRealTime)
+            dataButton(ConstantsSting.onRealTime, ButtonType.DB_OPTIONS.toString() + "&" + dataBase +"&3")
         }
         row {
-            dataButton(ConstantsSting.backBtn, ButtonType.BACK.toString()+" "+ ButtonType.DB_OPTIONS.toString())
+            dataButton(ConstantsSting.backBtn, ButtonType.BACK.toString() + "&" + dataBase +"&4")
         }
         row {
-            dataButton(ConstantsSting.monitorCommon, ButtonType.DB_OPTIONS.toString() + " " + ConstantsSting.monitorCommon)
+            dataButton(ConstantsSting.monitorCommon, ButtonType.DB_OPTIONS.toString() + "&" + dataBase +"&5")
         }
 
     }
@@ -47,7 +47,7 @@ object ConstantsKeyboards {
     fun getDataBasesKeyBoard(dataBases: List<String>) = inlineKeyboard {
         dataBases.forEach {
             row {
-                dataButton(it, ButtonType.SELECT_DATABASE.toString() + " " + it)
+                dataButton(it, ButtonType.SELECT_DATABASE.toString() + "&" + it)
             }
         }
         row { dataButton(ConstantsSting.addDatabase, ButtonType.ADD_DB.toString()) }
@@ -55,7 +55,7 @@ object ConstantsKeyboards {
 
     fun getLogInlineKeyboard(data: String) = inlineKeyboard {
         row {
-            dataButton(ConstantsSting.showSolution, ButtonType.COMMAND.toString() + " " + data)
+            dataButton(ConstantsSting.showSolution, ButtonType.COMMAND.toString() + "&" + data)
         }
     }
 }
