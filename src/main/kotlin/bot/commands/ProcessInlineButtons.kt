@@ -5,6 +5,7 @@ import bot.Command
 import bot.constants.ButtonType
 import bot.constants.ConstantsKeyboards
 import bot.constants.toButtonType
+import data.Api
 import dev.inmo.tgbotapi.extensions.api.answers.answer
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
@@ -13,7 +14,7 @@ import dev.inmo.tgbotapi.types.IdChatIdentifier
 import kotlinx.coroutines.CoroutineScope
 import org.kodein.di.instance
 
-class ProcessInlineButtons : Command {
+class ProcessInlineButtons( private val api: Api) : Command {
     private val checkPointProcess: CheckPointCommandProcess by Dependencies.di.instance()
     private val onCheckPointProcess: OnCheckPointRealtimeCommandProcess by Dependencies.di.instance()
     private val offCheckPointProcess: OffCheckPointRealtimeCommandsProcess by Dependencies.di.instance()
@@ -31,7 +32,7 @@ class ProcessInlineButtons : Command {
 //                    }?.let { id -> RuntimeStorage.userData.add(User(id.chatId, args[1])) }
 
                     //RuntimeStorage.userData.first { it.id == message.message.chat.id.chatId }.currentDb = args[1]
-                        // todo добавить
+                    // todo добавить
 //                    println(RuntimeStorage.userData)
                     sendTextMessage( // Todo Не открывается
                         message.message.chat.id,
@@ -51,9 +52,20 @@ class ProcessInlineButtons : Command {
                 }
 
 
-                ButtonType.BACK -> TODO()
+                ButtonType.BACK -> sendTextMessage(
+                    message.message.chat.id,
+                    "Выберите действие",
+                    replyMarkup = ConstantsKeyboards.getDataBasesKeyBoard(
+                        api.getDataBaseList( message.message.chat.id.chatId).fold(onSuccess = { it.map { it.name } }, onFailure = { listOf() })
+                    )
+                )
+
                 ButtonType.MAIN_OPTIONS -> TODO()
-                ButtonType.ADD_DB -> TODO()
+                ButtonType.ADD_DB -> addDataBaseCommandProcess.addDataBase(
+                    message.message.chat.id,
+                    this
+                )
+
                 ButtonType.COMMAND -> TODO()
             }
             answer(message)

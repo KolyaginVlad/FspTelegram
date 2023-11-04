@@ -46,10 +46,7 @@ class HttpRequester(private val client: HttpClient) : Api {
 
     override suspend fun checkPoint(userId: Long, dataBase: String): Result<Unit> {
         val response = runCatching {
-            client.get("${BASE_URL}Activity/get-error-status/$dataBase") {  //TODO
-                contentType(ContentType.Application.Json)
-//                setBody(CheckPointDto(userId, dataBase))
-            }
+            client.get("${BASE_URL}Activity/get-error-status/$userId/$dataBase")
         }.onFailure {
             it.printStackTrace()
         }.getOrNull()

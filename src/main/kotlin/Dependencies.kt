@@ -35,7 +35,7 @@ object Dependencies {
 
         bindSingleton { OffCheckPointRealtimeCommandsProcess() }
 
-        bindSingleton { ProcessInlineButtons() }
+        bindSingleton { ProcessInlineButtons(instance()) }
 
 //        bindSingleton {
 //            val streams = kafkaStreams(
