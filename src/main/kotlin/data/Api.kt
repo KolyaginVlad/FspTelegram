@@ -3,6 +3,7 @@ package data
 import bot.constants.ConstantsKeyboards
 import data.models.DataBaseResponseDto
 import data.models.MetrixDto
+import data.models.VacuumDto
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
@@ -29,7 +30,7 @@ interface Api {
 
     suspend fun getMetrix(dataBase: String): Result<MetrixDto>
 
-    suspend fun vacuum(userId: Long, dataBase: String): Result<Unit>
+    suspend fun vacuum(userId: Long, dataBase: String): Result<VacuumDto>
 
 }
 

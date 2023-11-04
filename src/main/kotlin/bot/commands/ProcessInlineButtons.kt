@@ -7,7 +7,6 @@ import bot.constants.ConstantsKeyboards
 import bot.constants.ConstantsSting
 import bot.constants.toButtonType
 import data.Api
-import data.foldMsg
 import dev.inmo.tgbotapi.extensions.api.answers.answer
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
@@ -26,6 +25,8 @@ class ProcessInlineButtons(private val api: Api) : Command {
     private val addDataBaseCommandProcess: AddDataBaseCommandProcess by Dependencies.di.instance()
     private val processCustomQuery: ProcessCustomQuery by Dependencies.di.instance()
     private val metrixCommand: MetrixCommand by Dependencies.di.instance()
+    private val vacuumCommandProcess: VacuumCommandProcess by Dependencies.di.instance()
+
     override suspend fun BehaviourContext.process() {
         onMessageDataCallbackQuery { message ->
             val args = message.data.split(ConstantsSting.DELIMITER)
@@ -74,15 +75,15 @@ class ProcessInlineButtons(private val api: Api) : Command {
         }
     }
 
-    private suspend fun DB_OPTIONS(method: String, dataBase: String, message: MessageDataCallbackQuery, context: BehaviourContext) {
+    private suspend fun DB_OPTIONS(method: String, database: String, message: MessageDataCallbackQuery, context: BehaviourContext) {
         when (method) {
-            "1" -> checkPointProcess.start(context, message, dataBase)
-            "2" -> checkPointDateProcess.start(context, message, dataBase)
+            "1" -> checkPointProcess.start(context, message, database)
+            "2" -> checkPointDateProcess.start(context, message, database)
             "3" -> onCheckPointProcess.start(context)
             "4" -> TODO()
             "5" -> TODO()
-            "6" -> metrixCommand.start(context, message, dataBase)
-            "7" -> api.vacuum(message.message.chat.id.chatId, dataBase).foldMsg(context, message, api, dataBase)
+            "6" -> metrixCommand.start(context, message, database)
+            "7" -> vacuumCommandProcess.start(context, message, database)
             else -> {}
         }
     }

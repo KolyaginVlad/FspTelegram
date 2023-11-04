@@ -41,6 +41,8 @@ object Dependencies {
 
         bindSingleton { MetrixCommand(instance()) }
 
+        bindSingleton { VacuumCommandProcess(instance()) }
+
         bindSingleton { ProcessCustomQuery() }
 
         bindSingleton {

@@ -123,7 +123,7 @@ class HttpRequester(private val client: HttpClient) : Api {
         }
     }
 
-    override suspend fun vacuum(userId: Long, dataBase: String): Result<Unit> {
+    override suspend fun vacuum(userId: Long, dataBase: String): Result<VacuumDto> {
         val response = runCatching {
             client.get("${BASE_URL}Vacuum/full/$userId/$dataBase") {
                 contentType(ContentType.Application.Json)
