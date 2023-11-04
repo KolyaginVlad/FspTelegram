@@ -50,13 +50,11 @@ class ProcessInlineButtons(private val api: Api) : Command {
                 }
 
                 ButtonType.REPAIR -> {}
-
-                ButtonType.BACK -> BACK(args[3], this, message)
-
+                ButtonType.BACK -> BACK(args.last(), this, message)
                 ButtonType.MAIN_OPTIONS -> TODO()
-                ButtonType.ADD_DB -> addDataBaseCommandProcess.addDataBase(
-                    message.message.chat.id,
-                    this
+                ButtonType.ADD_DB -> addDataBaseCommandProcess.start(
+                    this,
+                    message,
                 )
 
                 ButtonType.COMMAND -> TODO()
@@ -95,6 +93,7 @@ class ProcessInlineButtons(private val api: Api) : Command {
     }
 
     suspend fun BACK(now: String, context: BehaviourContext, message: MessageDataCallbackQuery) {
+        println("BACK $now")
         when (now) {
             "DB_OPTIONS" -> {
                 context.sendTextMessage(
@@ -106,6 +105,19 @@ class ProcessInlineButtons(private val api: Api) : Command {
                     )
                 )
             }
+
+            "ADD_DB" -> {
+
+                context.sendTextMessage(
+                    message.message.chat.id,
+                    "Выберите действие",
+                    replyMarkup = ConstantsKeyboards.getDataBasesKeyBoard(
+                        api.getDataBaseList(message.message.chat.id.chatId)
+                            .fold(onSuccess = { it.map { it.name } }, onFailure = { listOf() })
+                    )
+                )
+            }
+
             else -> {}
         }
     }

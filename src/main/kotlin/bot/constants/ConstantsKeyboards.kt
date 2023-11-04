@@ -15,6 +15,14 @@ object ConstantsKeyboards {
             }
         }
     )
+    val addDBBack = dev.inmo.tgbotapi.types.buttons.ReplyKeyboardMarkup(
+        matrix {
+            row {
+                +SimpleKeyboardButton("назад")
+            }
+        },
+        oneTimeKeyboard = true
+    )
 
     val onlyAddDatabase = inlineKeyboard {
         row { dataButton(ConstantsSting.addDatabase, ButtonType.ADD_DB.toString()) }
@@ -57,7 +65,7 @@ object ConstantsKeyboards {
         row {
             dataButton(
                 ConstantsSting.backBtn,
-                ButtonType.BACK.toString() + DELIMITER + dataBase + DELIMITER + "4" + ButtonType.DB_OPTIONS.toString()
+                ButtonType.BACK.toString() + DELIMITER + dataBase + DELIMITER + "4" + DELIMITER + ButtonType.DB_OPTIONS.toString()
             )
         }
     }
