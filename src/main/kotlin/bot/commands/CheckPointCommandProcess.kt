@@ -9,75 +9,74 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onText
+import dev.inmo.tgbotapi.extensions.utils.chatIdOrNull
+import dev.inmo.tgbotapi.extensions.utils.fromUserOrNull
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
+import dev.inmo.tgbotapi.types.ChatId
+import dev.inmo.tgbotapi.types.ChatIdentifier
+import dev.inmo.tgbotapi.types.IdChatIdentifier
+import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
+import dev.inmo.tgbotapi.types.message.content.TextContent
+import io.ktor.content.*
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class CheckPointCommandProcess(
     private val api: Api
-) : Command {
-    override suspend fun BehaviourContext.process() {
-        onText({
-            it.content.text == ConstantsSting.checkPointBtn
-        }) {
-            val database = waitText(
-                SendTextMessage(
-                    it.chat.id,
-                    ConstantsSting.enterDb,
-                    replyMarkup = ConstantsKeyboards.empty
-                )
-            ).first().text
-            api.checkPoint(it.chat.id.chatId, database).fold(
+):Command  {
+    fun checkPoint(chatId: IdChatIdentifier,database:String, context: BehaviourContext) {
+        runBlocking {
+            api.checkPoint(chatId.chatId, database).fold(
                 onSuccess = { response ->
-                    sendTextMessage(
-                        it.chat.id,
+                    context.sendTextMessage(
+                        chatId,
                         response.toString(),
                         replyMarkup = ConstantsKeyboards.dataBaseCommands
                     )
                 },
                 onFailure = { error ->
-                    sendTextMessage(
-                        it.chat.id,
+                    context.sendTextMessage(
+                        chatId,
                         "Ошибка получения доступа",
                         replyMarkup = ConstantsKeyboards.getDataBasesKeyBoard(
-                            api.getDataBaseList(it.chat.id.chatId).fold(onSuccess = { it.map { it.name } }, onFailure = { listOf() })
-                        )
-                    )
-                }
-            )
-        }
-        onText({
-            it.content.text == ConstantsSting.checkPointDatetBtn
-        }) {
-            val database = waitText(
-                SendTextMessage(
-                    it.chat.id,
-                    ConstantsSting.enterDb,
-                )
-            ).first().text
-            val date = waitText(
-                SendTextMessage(
-                    it.chat.id,
-                    ConstantsSting.enterDate,
-                )
-            ).first().text
-            api.checkPointOnDate(it.chat.id.chatId, database, date).fold(
-                onSuccess = { response ->
-                    sendTextMessage(
-                        it.chat.id,
-                        response.toString(),
-                        replyMarkup = ConstantsKeyboards.dataBaseCommands
-                    )
-                },
-                onFailure = { error ->
-                    sendTextMessage(
-                        it.chat.id,
-                        "Ошибка получения доступа",
-                        replyMarkup = ConstantsKeyboards.getDataBasesKeyBoard(
-                            api.getDataBaseList(it.chat.id.chatId).fold(onSuccess = { it.map { it.name } }, onFailure = { listOf() })
+                            api.getDataBaseList(chatId.chatId).fold(onSuccess = { it.map { it.name } }, onFailure = { listOf() })
                         )
                     )
                 }
             )
         }
     }
+
+    fun checkPointDate(chatId: IdChatIdentifier, database:String,context: BehaviourContext) {
+        runBlocking {
+            val date = context.waitText(
+                SendTextMessage(
+                    chatId,
+                    ConstantsSting.enterDate,
+                )
+            ).first().text
+            api.checkPointOnDate(chatId.chatId, database, date).fold(
+                onSuccess = { response ->
+                    context.sendTextMessage(
+                        chatId,
+                        response.toString(),
+                        replyMarkup = ConstantsKeyboards.dataBaseCommands
+                    )
+                },
+                onFailure = { error ->
+                    context.sendTextMessage(
+                        chatId,
+                        "Ошибка получения доступа",
+                        replyMarkup = ConstantsKeyboards.getDataBasesKeyBoard(
+                            api.getDataBaseList(chatId.chatId).fold(onSuccess = { it.map { it.name } }, onFailure = { listOf() })
+                        )
+                    )
+                }
+            )
+        }
+    }
+
+    override suspend fun BehaviourContext.process() {}
+    // }
 }

@@ -15,65 +15,63 @@ object ConstantsKeyboards {
         }
     )
 
-    val onlyAddDatabase = dev.inmo.tgbotapi.types.buttons.ReplyKeyboardMarkup(
-        matrix {
-            row {
-                +SimpleKeyboardButton(ConstantsSting.addDatabase)
-            }
-        },
-        resizeKeyboard = true
-    )
+    val onlyAddDatabase = inlineKeyboard {
+        row {
+            dataButton(ConstantsSting.checkPointDatetBtn, ConstantsSting.checkPointDatetBtn)
+        }
+    }
 
-    val dataBaseCommands = dev.inmo.tgbotapi.types.buttons.ReplyKeyboardMarkup(
-        matrix {
-            row {
-                +SimpleKeyboardButton(ConstantsSting.checkPointBtn)
-            }
-            row {
-                +SimpleKeyboardButton(ConstantsSting.checkPointDatetBtn)
-            }
-            row {
-                +SimpleKeyboardButton(ConstantsSting.onRealTime)
-            }
-            row {
-                +SimpleKeyboardButton(ConstantsSting.backBtn)
-            }
-            row{
-                +SimpleKeyboardButton(ConstantsSting.monitorCommon)
-            }
-        },
-        resizeKeyboard = true
-    )
+    val dataBaseCommands = inlineKeyboard {
+        row {
+            dataButton(ConstantsSting.checkPointBtn, ButtonType.DB_OPTIONS.toString() + " " + ConstantsSting.checkPointBtn)
+        }
+        row {
+            dataButton(ConstantsSting.checkPointDatetBtn, ButtonType.DB_OPTIONS.toString() + " " + ConstantsSting.checkPointDatetBtn)
+        }
+        row {
+            dataButton(ConstantsSting.onRealTime, ButtonType.DB_OPTIONS.toString() + " " + ConstantsSting.onRealTime)
+        }
+        row {
+            dataButton(ConstantsSting.backBtn, ButtonType.BACK.toString()+" "+ ButtonType.DB_OPTIONS.toString())
+        }
+        row {
+            dataButton(ConstantsSting.monitorCommon, ButtonType.DB_OPTIONS.toString() + " " + ConstantsSting.monitorCommon)
+        }
 
-    val checkAndAddWithOffRealtime = dev.inmo.tgbotapi.types.buttons.ReplyKeyboardMarkup(
-        matrix {
-            row {
-                +SimpleKeyboardButton(ConstantsSting.addDatabase)
-                +SimpleKeyboardButton(ConstantsSting.checkPointBtn)
-                +SimpleKeyboardButton(ConstantsSting.checkPointDatetBtn)
-                +SimpleKeyboardButton(ConstantsSting.offRealTime)
-            }
-        },
-        resizeKeyboard = true
-    )
+    }
 
-    fun getDataBasesKeyBoard(dataBases: List<String>) = dev.inmo.tgbotapi.types.buttons.ReplyKeyboardMarkup(
-        matrix {
-            dataBases.forEach {
-                row {
-                    +SimpleKeyboardButton(it)
-                }
-            }
+    val checkAndAddWithOffRealtime = inlineKeyboard {
+        row { dataButton(ConstantsSting.addDatabase, ConstantsSting.addDatabase) }
+        row { dataButton(ConstantsSting.checkPointBtn, ConstantsSting.checkPointBtn) }
+        row { dataButton(ConstantsSting.checkPointDatetBtn, ConstantsSting.checkPointDatetBtn) }
+        row { dataButton(ConstantsSting.offRealTime, ConstantsSting.offRealTime) }
+    }
+
+    fun getDataBasesKeyBoard(dataBases: List<String>) = inlineKeyboard {
+        dataBases.forEach {
             row {
-                +SimpleKeyboardButton(ConstantsSting.addDatabase)
+                dataButton(it, ButtonType.SELECT_DATABASE.toString() + " " + it)
             }
-        },
-        resizeKeyboard = true
-    )
+        }
+        row { dataButton(ConstantsSting.addDatabase, ButtonType.ADD_DB.toString()) }
+    }
 
     fun getLogInlineKeyboard(data: String) = inlineKeyboard {
         row {
-            dataButton(ConstantsSting.showSolution, data)
+            dataButton(ConstantsSting.showSolution, ButtonType.COMMAND.toString() + " " + data)
         }
     }
+}
+
+enum class ButtonType {
+    SELECT_DATABASE, DB_OPTIONS, BACK, MAIN_OPTIONS, ADD_DB, COMMAND
+}
+
+fun String.toButtonType() = when (this) {
+    "SELECT_DATABASE" -> ButtonType.SELECT_DATABASE
+    "DB_OPTIONS" -> ButtonType.DB_OPTIONS
+    "BACK" -> ButtonType.BACK
+    "MAIN_OPTIONS" -> ButtonType.MAIN_OPTIONS
+    "ADD_DB" -> ButtonType.ADD_DB
+    else -> ButtonType.COMMAND
 }
