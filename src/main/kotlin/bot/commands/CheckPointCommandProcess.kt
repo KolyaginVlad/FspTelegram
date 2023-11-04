@@ -25,7 +25,7 @@ class CheckPointCommandProcess(
                         "Ok" -> sendTextMessage(
                             data.message.chat.id,
                             "База данных в порядке",
-                            replyMarkup = ConstantsKeyboards.getDataBasesCommands(database)
+                            // replyMarkup = ConstantsKeyboards.getDataBasesCommands(database)
                         )
 
                         "Lock" -> sendTextMessage(
@@ -35,9 +35,7 @@ class CheckPointCommandProcess(
                             PID: ${response.pid}
                             Последнее время обновления состояния: ${response.stateLastChangeDate}
                             """.trimIndent(),
-                            replyMarkup = ConstantsKeyboards.repairTransactionKeyboard(
-                                response.dataBase!!,
-                            )
+                            replyMarkup = ConstantsKeyboards.repairTransactionKeyboard(response.dataBase!!)
                         )
 
                         else -> sendTextMessage(
@@ -47,7 +45,7 @@ class CheckPointCommandProcess(
                             PID: ${response.pid}
                             Последнее время обновления состояния: ${response.stateLastChangeDate}
                             """.trimIndent(),
-                            replyMarkup = ConstantsKeyboards.getDataBasesCommands(database)
+                           // replyMarkup = ConstantsKeyboards.getDataBasesCommands(database)
                         )
                     }
                 }

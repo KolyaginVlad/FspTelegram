@@ -2,6 +2,7 @@ package bot.commands
 
 import Dependencies
 import bot.Command
+import bot.RuntimeStorage
 import bot.constants.ButtonType
 import bot.constants.ConstantsKeyboards
 import bot.constants.ConstantsString
@@ -32,11 +33,23 @@ class ProcessInlineButtons(private val api: Api) : Command {
 
     override suspend fun BehaviourContext.process() {
         onMessageDataCallbackQuery { message ->
-            //if (RuntimeStorage.userRealtimeMap[message.message.chat.id.chatId] != true) {
-                val args = message.data.split(ConstantsString.DELIMITER)
-                println(args[0].toButtonType())
+            val args = message.data.split(ConstantsString.DELIMITER)
+            println(args[0].toButtonType())
+            if (args[0] == ButtonType.STOP_MONITORING.toString()) {
+                RuntimeStorage.userRealtimeMap[message.message.chat.id.chatId] = false
+            }
+            if (RuntimeStorage.userRealtimeMap[message.message.chat.id.chatId] != true) {
                 when (args[0].toButtonType()) {
                     ButtonType.SELECT_DATABASE -> {
+                        sendTextMessage(
+                            message.message.chat.id,
+                            "Выберите действие",
+                            replyMarkup = ConstantsKeyboards.getDataBasesCommands(args[1])
+                        )
+                    }
+
+                    ButtonType.STOP_MONITORING -> {
+                        RuntimeStorage.userRealtimeMap[message.message.chat.id.chatId] = false
                         sendTextMessage(
                             message.message.chat.id,
                             "Выберите действие",
@@ -65,8 +78,8 @@ class ProcessInlineButtons(private val api: Api) : Command {
                     ButtonType.MAIN_OPTIONS -> TODO()
                     ButtonType.ADD_DB -> sendTextMessage(
                         message.message.chat,
-                    ConstantsString.selectConnectMethod,
-                    replyMarkup = ConstantsKeyboards.selectAddDatabaseMethodKeyboard
+                        ConstantsString.selectConnectMethod,
+                        replyMarkup = ConstantsKeyboards.selectAddDatabaseMethodKeyboard
                     )
 
                     ButtonType.COMMAND -> TODO()
@@ -75,10 +88,11 @@ class ProcessInlineButtons(private val api: Api) : Command {
                     }
 
                     ButtonType.LOG_SETTINGS -> TODO()
-                ButtonType.SELECT_DATABASE_ADD -> selectDatabaseAdd(args[1], this, message)}
+                    ButtonType.SELECT_DATABASE_ADD -> selectDatabaseAdd(args[1], this, message)
+                }
                 answer(message)
             }
-       // }
+        }
     }
 
     private suspend fun selectDatabaseAdd(
@@ -102,7 +116,7 @@ class ProcessInlineButtons(private val api: Api) : Command {
     ) {
         when (method) {
             "1" -> checkPointProcess.start(context, message, database)
-          //  "2" -> checkPointDateProcess.start(context, message, database)
+            //  "2" -> checkPointDateProcess.start(context, message, database)
             "3" -> onCheckPointProcess.start(context, message, database)
             "4" -> TODO()
             "5" -> TODO()

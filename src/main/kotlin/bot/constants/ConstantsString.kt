@@ -16,6 +16,7 @@ object ConstantsString {
     const val checkPointBtn = "Проверить базу данных"
     const val checkPointDatetBtn = "Проверить базу данных в определённое время"
     const val backBtn = "Назад"
+    const val stopBtn = "Остановить"
     const val monitorCommon = "Мониторинг всех баз"
     const val metrix = "Получить метрики"
     const val onEmoji = "✅"

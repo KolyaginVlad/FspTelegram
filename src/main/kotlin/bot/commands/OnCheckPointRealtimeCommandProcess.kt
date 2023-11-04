@@ -25,15 +25,27 @@ class OnCheckPointRealtimeCommandProcess(
         val context = this
         corutineScope.launch {
             while (RuntimeStorage.userRealtimeMap[data.message.chat.id.chatId] == true) {
-                delay(15000)
                 api.checkPoint(data.message.chat.id.chatId, database).fold(
                     onSuccess = { responses ->
                         responses.forEach { response ->
                             when (response.messageType) {
-                                "Ok" ->
-                                    sendTextMessage(
-                                        data.message.chat.id,
-                                        "Ok")//metrixCommand.start(context, data, response.dataBase)
+                                "Ok" -> api.getMetrix(database, data.message.chat.id.chatId).fold(
+                                    onSuccess = { response ->
+                                        sendTextMessage(
+                                            data.message.chat.id,
+                                            response.toString(),
+                                            replyMarkup = ConstantsKeyboards.stop
+                                        )
+                                    },
+                                    onFailure = { error ->
+                                        sendTextMessage(
+                                            data.message.chat.id,
+                                            "База данных в порядке, невозможно получить метрики",
+                                            replyMarkup = ConstantsKeyboards.stop
+                                        )
+                                    }
+                                )
+
                                 "Lock" -> sendTextMessage(
                                     data.message.chat.id,
                                     """
@@ -63,6 +75,7 @@ class OnCheckPointRealtimeCommandProcess(
                             "Статус не получен",
                         )
                     })
+                delay(15000)
             }
         }
     }

@@ -96,9 +96,9 @@ class HttpRequester(private val client: HttpClient) : Api {
         }
     }
 
-    override suspend fun getMetrix(dataBase: String): Result<MetrixDto> {
+    override suspend fun getMetrix(dataBase: String,userId: Long): Result<MetrixDto> {
         val response = runCatching {
-            client.get("${BASE_URL}credentials/stat-database/$dataBase") {
+            client.get("${BASE_URL}credentials/stat-database/$userId/$dataBase") {
                 contentType(ContentType.Application.Json)
             }
         }.onFailure {

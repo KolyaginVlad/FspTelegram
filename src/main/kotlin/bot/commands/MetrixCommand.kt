@@ -6,32 +6,29 @@ import data.Api
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
-import kotlinx.coroutines.runBlocking
 
 class MetrixCommand(
     private val api: Api
 ) : CommandWithDataDataBase {
     override suspend fun BehaviourContext.process(data: MessageDataCallbackQuery, database: String) {
-        runBlocking {
-            api.getMetrix(database).fold(
-                onSuccess = { response ->
-                    sendTextMessage(
-                        data.message.chat.id,
-                        response.toString(),
-                        replyMarkup = ConstantsKeyboards.getDataBasesCommands(database)
+        api.getMetrix(database,data.message.chat.id.chatId).fold(
+            onSuccess = { response ->
+                sendTextMessage(
+                    data.message.chat.id,
+                    response.toString(),
+                    replyMarkup = ConstantsKeyboards.getDataBasesCommands(database)
+                )
+            },
+            onFailure = { error ->
+                sendTextMessage(
+                    data.message.chat.id,
+                    "Ошибка получения доступа",
+                    replyMarkup = ConstantsKeyboards.getDataBasesKeyBoard(
+                        api.getDataBaseList(data.message.chat.id.chatId)
+                            .fold(onSuccess = { it.map { it.name } }, onFailure = { listOf() })
                     )
-                },
-                onFailure = { error ->
-                    sendTextMessage(
-                        data.message.chat.id,
-                        "Ошибка получения доступа",
-                        replyMarkup = ConstantsKeyboards.getDataBasesKeyBoard(
-                            api.getDataBaseList(data.message.chat.id.chatId)
-                                .fold(onSuccess = { it.map { it.name } }, onFailure = { listOf() })
-                        )
-                    )
-                }
-            )
-        }
+                )
+            }
+        )
     }
 }

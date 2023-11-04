@@ -24,3 +24,18 @@ data class MetrixDto(
                 "conflictCount $conflictCount \ndeadlockSum $deadlockSum \nsessionTime $sessionTime \n" +
                 "sesssionCount $sesssionCount \nsessionKilledCount $sessionKilledCount \nsessionAbandonedCount $sessionAbandonedCount"
 }
+
+/*
+"transactionCount": "3208",
+  "getCount": "31542",
+  "insertCount": "0",
+  "updateCount": "0",
+  "deleteCount": "0",
+  "returnCount": "220659",
+  "conflictCount": "0",
+  "deadlockSum": "0",
+  "sessionTime": "20025309.136",
+  "sesssionCount": "74",
+  "sessionKilledCount": "0",
+  "sessionAbandonedCount": "0"
+ */

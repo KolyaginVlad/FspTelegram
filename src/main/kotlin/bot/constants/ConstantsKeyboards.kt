@@ -16,6 +16,12 @@ object ConstantsKeyboards {
         }
     )
 
+    val stop = inlineKeyboard {
+        row {
+            dataButton(ConstantsString.stopBtn, "${ButtonType.STOP_MONITORING}${DELIMITER}1")
+        }
+    }
+
     val selectAddDatabaseMethodKeyboard = inlineKeyboard {
         row {
             dataButton(ConstantsString.databaseConnectionConstructor, "${ButtonType.SELECT_DATABASE_ADD}${DELIMITER}1")
@@ -124,7 +130,7 @@ object ConstantsKeyboards {
 }
 
 enum class ButtonType {
-    SELECT_DATABASE_ADD, SELECT_DATABASE, DB_OPTIONS, BACK, MAIN_OPTIONS, ADD_DB, COMMAND, CUSTOM_QUERY, LOG_SETTINGS, REPAIR
+    SELECT_DATABASE_ADD, SELECT_DATABASE, DB_OPTIONS, BACK, MAIN_OPTIONS, ADD_DB, COMMAND, CUSTOM_QUERY, LOG_SETTINGS, REPAIR, STOP_MONITORING
 }
 
 fun String.toButtonType() = ButtonType.valueOf(this)

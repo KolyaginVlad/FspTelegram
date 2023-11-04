@@ -29,7 +29,7 @@ interface Api {
 
     suspend fun killTransaction(userId: Long, database: String): Result<Unit>
 
-    suspend fun getMetrix(dataBase: String): Result<MetrixDto>
+    suspend fun getMetrix(dataBase: String,userId: Long): Result<MetrixDto>
 
     suspend fun vacuum(userId: Long, dataBase: String): Result<VacuumDto>
 
