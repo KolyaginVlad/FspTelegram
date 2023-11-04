@@ -17,7 +17,7 @@ class OffCheckPointRealtimeCommandsProcess : Command {
             sendTextMessage(
                 info.chat,
                 ConstantsSting.realtimeOff,
-                replyMarkup = ConstantsKeyboards.getDataBasesCommands("database")//TODO
+                replyMarkup = ConstantsKeyboards.getDataBasesCommands("database")
             )
         }
     }

@@ -72,7 +72,7 @@ class BotManager {
                 //checkPointProcess.start(this)
                 onCheckPointProcess.start(this)
                 offCheckPointProcess.start(this)
-                addDataBaseCommandProcess.start(this)
+                //addDataBaseCommandProcess.start(this)
                 processInlineButtons.start(this)
             }.join()
         }
