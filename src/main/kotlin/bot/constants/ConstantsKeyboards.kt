@@ -104,10 +104,28 @@ object ConstantsKeyboards {
             dataButton(ConstantsSting.restartDb, ButtonType.REPAIR.toString() + DELIMITER + "-1")
         }
     }
+
+    fun repairTransactionKeyboard(database: String) = inlineKeyboard {
+        row {
+            dataButton(ConstantsSting.restartDb, ButtonType.REPAIR.toString() + DELIMITER + "-1" + DELIMITER + database)
+        }
+    }
+
+    fun getLogSettingsKeyboard(database: String, settings: List<Pair<String, Boolean>>) =
+        inlineKeyboard {
+            settings.forEachIndexed { index, (setting, isEnabled) ->
+                row {
+                    dataButton(
+                        "$setting${if (isEnabled) ConstantsSting.onEmoji else ConstantsSting.offEmoji}",
+                        "${ButtonType.LOG_SETTINGS}$DELIMITER$database$DELIMITER$index"
+                    )
+                }
+            }
+        }
 }
 
 enum class ButtonType {
-    SELECT_DATABASE, DB_OPTIONS, BACK, MAIN_OPTIONS, ADD_DB, COMMAND, CUSTOM_QUERY, REPAIR
+    SELECT_DATABASE, DB_OPTIONS, BACK, MAIN_OPTIONS, ADD_DB, COMMAND, CUSTOM_QUERY, LOG_SETTINGS, REPAIR
 }
 
 fun String.toButtonType() = when (this) {

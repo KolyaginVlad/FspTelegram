@@ -5,6 +5,8 @@ import org.apache.kafka.clients.admin.NewTopic
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.sour.cabbage.soup.Kafka
 
+tailrec fun <T> repeatUntilSome(block: () -> T?): T = block() ?: repeatUntilSome(block)
+
 fun main() {
     BotManager()
 }
@@ -20,10 +22,4 @@ fun Application.module() {
             NewTopic("log-topic", 1, 1)
         )
     }
-
-//    val streams: KafkaStreams by Dependencies.di.instance()
-//
-//    environment.monitor.subscribe(ApplicationStopped) {
-//        streams.close(Duration.ofSeconds(5))
-//    }
 }

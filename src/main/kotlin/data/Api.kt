@@ -25,7 +25,7 @@ interface Api {
 
     suspend fun getDataBaseList(userId: Long): Result<List<DataBaseResponseDto>>
 
-    suspend fun killTransaction(userId: Long): Result<Unit>
+    suspend fun killTransaction(userId: Long, database: String): Result<Unit>
 
     suspend fun getMetrix(dataBase: String): Result<MetrixDto>
 

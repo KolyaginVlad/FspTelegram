@@ -91,9 +91,9 @@ class HttpRequester(private val client: HttpClient) : Api {
         }
     }
 
-    override suspend fun killTransaction(userId: Long): Result<Unit> {
+    override suspend fun killTransaction(userId: Long, database: String): Result<Unit> {
         val response = runCatching {
-            client.get("${BASE_URL}Activity/kill-transaction/$userId") {
+            client.get("${BASE_URL}Activity/kill-transaction/$userId/$database") {
                 contentType(ContentType.Application.Json)
             }
         }.onFailure {

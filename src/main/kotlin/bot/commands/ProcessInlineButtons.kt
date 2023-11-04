@@ -49,7 +49,12 @@ class ProcessInlineButtons(private val api: Api) : Command {
                     )
                 }
 
-                ButtonType.REPAIR -> {}
+                ButtonType.REPAIR -> {
+                    when (args[1]) {
+                        "-1" -> killTransactionCommandProcess.start(this, message, args[2])
+                        else -> {}
+                    }
+                }
 
                 ButtonType.BACK -> BACK(args[2], this, message)
 
@@ -63,6 +68,8 @@ class ProcessInlineButtons(private val api: Api) : Command {
                 ButtonType.CUSTOM_QUERY -> {
                     processCustomQuery.start(this, message)
                 }
+
+                ButtonType.LOG_SETTINGS -> TODO()
             }
             answer(message)
         }
@@ -88,10 +95,7 @@ class ProcessInlineButtons(private val api: Api) : Command {
     }
 
     suspend fun REPAIR(method: String, dataBase: String, message: MessageDataCallbackQuery, context: BehaviourContext) {
-        when (method) {
-            "-1" -> killTransactionCommandProcess.start(context, message, dataBase)
-            else -> {}
-        }
+
     }
 
     suspend fun BACK(now: String, context: BehaviourContext, message: MessageDataCallbackQuery) {

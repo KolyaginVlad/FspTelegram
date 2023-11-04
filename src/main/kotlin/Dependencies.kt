@@ -1,3 +1,4 @@
+
 import bot.commands.*
 import data.Api
 import data.HttpRequester
@@ -10,9 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.Json
 import org.apache.kafka.clients.consumer.ConsumerConfig
-import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.common.serialization.StringDeserializer
-import org.apache.kafka.streams.StreamsConfig
 import org.kodein.di.DI
 import org.kodein.di.bindSingleton
 import org.kodein.di.instance
@@ -39,23 +38,10 @@ object Dependencies {
         bindSingleton { OffCheckPointRealtimeCommandsProcess() }
 
         bindSingleton { ProcessInlineButtons(instance()) }
+
         bindSingleton { MetrixCommand(instance()) }
 
         bindSingleton { ProcessCustomQuery() }
-
-//        bindSingleton {
-//            val streams = kafkaStreams(
-//                KafkaStreamsConfig(
-//                    topologyBuilder = topology(),
-//                    streamsConfig = streamsConfig(),
-//                    builder = StreamsBuilder()
-//                )
-//            )
-//            streams.cleanUp()
-//            streams.start()
-//
-//            streams
-//        }
 
         bindSingleton {
             consumer<String, String>(
@@ -64,7 +50,6 @@ object Dependencies {
                     ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
                     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
                     ConsumerConfig.GROUP_ID_CONFIG to "0",
-//                    ConsumerConfig.CLIENT_ID_CONFIG to "amazing-consumer-client"
                 ),
                 listOf(TOPIC)
             )
@@ -74,25 +59,16 @@ object Dependencies {
             HttpClient(CIO) {
                 install(ContentNegotiation) {
                     json(
-                        Json {
-                            ignoreUnknownKeys = true
-                            encodeDefaults = true
-                        }
+                        instance<Json>()
                     )
                 }
             }
         }
-    }
 
-    fun streamsConfig(): Map<String, Any> {
-        return mapOf(
-            StreamsConfig.BOOTSTRAP_SERVERS_CONFIG to BOOTSTRAP_SERVERS_CONFIG,
-            StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG to Serdes.String().javaClass,
-            StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG to Serdes.String().javaClass,
-            StreamsConfig.APPLICATION_ID_CONFIG to "amazing-app",
-            StreamsConfig.CLIENT_ID_CONFIG to "amazing-client",
-            StreamsConfig.COMMIT_INTERVAL_MS_CONFIG to 1000,
-        )
+        bindSingleton { Json {
+            ignoreUnknownKeys = true
+            encodeDefaults = true
+        } }
     }
 
     const val BOOTSTRAP_SERVERS_CONFIG = "http://188.225.46.50:9092"

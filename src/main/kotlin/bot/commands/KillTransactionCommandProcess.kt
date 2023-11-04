@@ -10,7 +10,7 @@ class KillTransactionCommandProcess(
     private val api: Api
 ) : CommandWithDataDataBase {
     override suspend fun BehaviourContext.process(data: MessageDataCallbackQuery, database: String) {
-        api.killTransaction(data.message.chat.id.chatId)
+        api.killTransaction(data.message.chat.id.chatId, database)
             .foldMsg(this, data, api, database)
     }
 }
