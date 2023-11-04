@@ -2,7 +2,6 @@ package bot.commands
 
 import bot.CommandWithData
 import bot.constants.ConstantsKeyboards
-import bot.constants.ConstantsKeyboards.addDBBack
 import bot.constants.ConstantsKeyboards.empty
 import data.Api
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
@@ -31,15 +30,15 @@ class AddDataBaseCommandProcess(
             SendTextMessage(
                 chatId,
                 "Введите имя базы данных",
-                replyMarkup = addDBBack
+               // replyMarkup = addDBBack
             )
         ).first().text
-        if (name == "назад") return
+        //if (name == "назад") return
         val host = context.waitText(
             SendTextMessage(
                 chatId,
                 "Введите host",
-                replyMarkup = addDBBack
+               // replyMarkup = addDBBack
             )
         ).first().text
         if (host == "назад") return
@@ -47,35 +46,34 @@ class AddDataBaseCommandProcess(
             SendTextMessage(
                 chatId,
                 "Введите port",
-                replyMarkup = addDBBack
-
+               // replyMarkup = addDBBack
             )
         ).first().text
-        if (port == "назад") return
+       // if (port == "назад") return
         val database = context.waitText(
             SendTextMessage(
                 chatId,
                 "Введите database",
-                replyMarkup = addDBBack
+               // replyMarkup = addDBBack
             )
         ).first().text
-        if (database == "назад") return
+        //if (database == "назад") return
         val username = context.waitText(
             SendTextMessage(
                 chatId,
                 "Введите username для подключения к базе данных",
-                replyMarkup = addDBBack
+             //   replyMarkup = addDBBack
             )
         ).first().text
-        if (username == "назад") return
+        //if (username == "назад") return
         val password = context.waitText(
             SendTextMessage(
                 chatId,
                 "Введите password для подключения к базе данных",
-                replyMarkup = addDBBack
+            //    replyMarkup = addDBBack
             )
         ).first().text
-        if (password == "назад") return
+       // if (password == "назад") return
         context.sendTextMessage(chatId, "Подождите, пробуем получить доступ...")
         api.sendConfig(chatId.chatId, name, host, port, database, username, password).fold(
             onSuccess = {
