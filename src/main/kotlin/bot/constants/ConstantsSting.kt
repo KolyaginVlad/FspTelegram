@@ -15,7 +15,7 @@ object ConstantsSting {
     const val metrix = "Получить метрики"
     const val onEmoji = "✅"
     const val offEmoji = "❌"
-    const val restartDb = "Перезапустить базу данных"
+    const val restartDb = "Убить транзакцию"
     const val DELIMITER = "@@@"
     const val vacuumClean = "Оптимизировать базу данных"
 }

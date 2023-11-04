@@ -32,7 +32,7 @@ class BotManager {
     init {
         val bot = telegramBot("6597360611:AAFZQQfRVjVkOZAT1_Ux6z9atoCHeWNFqmo")
         runBlocking {
-            launch {
+            scope.launch {
                 val consumer by Dependencies.di.instance<KafkaConsumer<String, String>>()
                 consumer.subscribe(listOf(Dependencies.TOPIC))
                 while (true) {
@@ -43,19 +43,22 @@ class BotManager {
                         val value = it.value().toString()
                         val json = jsonParser.parseToJsonElement(value)
                         when (json.jsonObject["MessageType"]?.toString()) {
-                            "LockStatus" -> {
+                            "\"LockStatus\"" -> {
                                 val lockError: LockError = jsonParser.decodeFromString(value)
-                                bot.sendTextMessage(
-                                    ChatId(lockError.lockInfo.userId),
-                                    """
-                                    Обнаружен deadlock в базе данных ${lockError.lockInfo.database}!
-                                    PID: ${lockError.lockInfo.pid}
-                                    Последнее время обновления состояния: ${lockError.lockInfo.lastChangeDate}
+                                lockError.lockInfo.forEach { info ->
+                                    bot.sendTextMessage(
+                                        ChatId(info.userId),
+                                        """
+                                    Обнаружен deadlock в базе данных ${info.database}!
+                                    PID: ${info.pid}
+                                    Последнее время обновления состояния: ${info.lastChangeDate}
                                     """.trimIndent(),
-                                    replyMarkup = ConstantsKeyboards.repairTransactionKeyboard(
-                                        lockError.lockInfo.database,
+                                        replyMarkup = ConstantsKeyboards.repairTransactionKeyboard(
+                                            info.database,
+                                        )
                                     )
-                                )
+
+                                }
                             }
 
                             else -> {

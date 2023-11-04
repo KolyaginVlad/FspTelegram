@@ -136,11 +136,4 @@ enum class ButtonType {
     SELECT_DATABASE, DB_OPTIONS, BACK, MAIN_OPTIONS, ADD_DB, COMMAND, CUSTOM_QUERY, LOG_SETTINGS, REPAIR
 }
 
-fun String.toButtonType() = when (this) {
-    "SELECT_DATABASE" -> ButtonType.SELECT_DATABASE
-    "DB_OPTIONS" -> ButtonType.DB_OPTIONS
-    "BACK" -> ButtonType.BACK
-    "MAIN_OPTIONS" -> ButtonType.MAIN_OPTIONS
-    "ADD_DB" -> ButtonType.ADD_DB
-    else -> ButtonType.COMMAND
-}
+fun String.toButtonType() = ButtonType.valueOf(this)

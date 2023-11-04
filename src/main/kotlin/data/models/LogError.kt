@@ -11,7 +11,7 @@ data class LockError(
     val type: String,
 
     @SerialName("Object")
-    val lockInfo: LockInfoObject
+    val lockInfo: List<LockInfoObject>
 )
 
 @Serializable
@@ -32,6 +32,6 @@ data class LockInfoObject(
     @SerialName("userId")
     val userId: Long,
 
-    @SerialName("database")
+    @SerialName("DataBase")
     val database: String
 )
