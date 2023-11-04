@@ -33,9 +33,9 @@ interface Api {
 
     suspend fun vacuum(userId: Long, dataBase: String): Result<VacuumDto>
 
-    suspend fun link(userId: Long): Result<String>
+    suspend fun link(userId: Long, database: String): Result<List<String>>
 
-    suspend fun visual(link: String): Result<String>
+    suspend fun visual(userId: Long, database: String, link: String): Result<String>
 
     suspend fun connectBySsh(userId: Long, ssh: String): Result<Unit>
 

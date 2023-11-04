@@ -128,9 +128,9 @@ class HttpRequester(private val client: HttpClient) : Api {
         }
     }
 
-    override suspend fun link(userId: Long): Result<String> {
+    override suspend fun link(userId: Long, database: String): Result<List<String>> {
         val response = runCatching {
-            client.get("${BASE_URL}Link/credential/$userId") {
+            client.get("${BASE_URL}Link/credential/$userId/$database") {
                 contentType(ContentType.Application.Json)
             }
         }.onFailure {
@@ -138,21 +138,21 @@ class HttpRequester(private val client: HttpClient) : Api {
         }.getOrNull()
         println("link ${response?.status?.value}")
         return if (response?.status?.value in 200..299 && response != null) {
-            Result.success(response.body())
+            Result.success(response.body<List<LinkDto>>().map { it.name })
         } else {
             Result.failure(Exception())
         }
     }
 
-    override suspend fun visual(link: String): Result<String> {
+    override suspend fun visual(userId: Long, database: String, link: String): Result<String> {
         val response = runCatching {
-            client.get("${BASE_URL}/api/Visual/$link") {
+            client.get("${BASE_URL}/api/Visual/$userId/$database/$link") {
                 contentType(ContentType.Application.Json)
             }
         }.onFailure {
             it.printStackTrace()
         }.getOrNull()
-        println("link ${response?.status?.value}")
+        println("visual ${response?.status?.value}")
         return if (response?.status?.value in 200..299 && response != null) {
             Result.success(response.body())
         } else {

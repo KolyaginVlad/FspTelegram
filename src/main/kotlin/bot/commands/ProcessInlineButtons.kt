@@ -30,6 +30,8 @@ class ProcessInlineButtons(private val api: Api) : Command {
     private val processCustomQuery: ProcessCustomQuery by Dependencies.di.instance()
     private val metrixCommand: MetrixCommand by Dependencies.di.instance()
     private val vacuumCommandProcess: VacuumCommandProcess by Dependencies.di.instance()
+    private val getImageByLinkCommandProcess: GetImageByLinkCommandProcess by Dependencies.di.instance()
+    private val getLinksCommandProcess: GetLinksCommandProcess by Dependencies.di.instance()
 
     override suspend fun BehaviourContext.process() {
         onMessageDataCallbackQuery { message ->
@@ -89,6 +91,7 @@ class ProcessInlineButtons(private val api: Api) : Command {
 
                     ButtonType.LOG_SETTINGS -> TODO()
                     ButtonType.SELECT_DATABASE_ADD -> selectDatabaseAdd(args[1], this, message)
+                ButtonType.LINK -> getImageByLinkCommandProcess.start(this, message, args[2])
                 }
                 answer(message)
             }
@@ -122,6 +125,7 @@ class ProcessInlineButtons(private val api: Api) : Command {
             "5" -> TODO()
             "6" -> metrixCommand.start(context, message, database)
             "7" -> vacuumCommandProcess.start(context, message, database)
+            "8" -> getLinksCommandProcess.start(context, message, database)
             else -> {}
         }
     }

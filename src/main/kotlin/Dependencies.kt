@@ -51,6 +51,10 @@ object Dependencies {
 
         bindSingleton { AddDatabaseFileCommandProcess() }
 
+        bindSingleton { GetImageByLinkCommandProcess(instance()) }
+
+        bindSingleton { GetLinksCommandProcess(instance()) }
+
         bindSingleton {
             consumer<String, String>(
                 mapOf(

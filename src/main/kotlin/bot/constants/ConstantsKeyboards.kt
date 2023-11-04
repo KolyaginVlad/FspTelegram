@@ -74,6 +74,12 @@ object ConstantsKeyboards {
             )
         }
         row {
+            dataButton(
+                ConstantsString.showLinks,
+                ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "8"
+            )
+        }
+        row {
             dataButton(ConstantsString.metrix, ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "6")
         }
         row {
@@ -98,6 +104,14 @@ object ConstantsKeyboards {
             }
         }
         row { dataButton(ConstantsString.addDatabase, ButtonType.ADD_DB.toString()) }
+    }
+
+    fun getLinkKeyboard(links: List<String>, database: String) = inlineKeyboard {
+        links.forEach {
+            row {
+                dataButton(it, "${ButtonType.LINK}$DELIMITER$it$DELIMITER$database")
+            }
+        }
     }
 
     val simpleAnswerKeyboard = dev.inmo.tgbotapi.types.buttons.ReplyKeyboardMarkup(
@@ -130,7 +144,7 @@ object ConstantsKeyboards {
 }
 
 enum class ButtonType {
-    SELECT_DATABASE_ADD, SELECT_DATABASE, DB_OPTIONS, BACK, MAIN_OPTIONS, ADD_DB, COMMAND, CUSTOM_QUERY, LOG_SETTINGS, REPAIR, STOP_MONITORING
+    SELECT_DATABASE_ADD, SELECT_DATABASE, DB_OPTIONS, BACK, MAIN_OPTIONS, ADD_DB, COMMAND, CUSTOM_QUERY, LOG_SETTINGS, REPAIR, STOP_MONITORING, LINK
 }
 
 fun String.toButtonType() = ButtonType.valueOf(this)

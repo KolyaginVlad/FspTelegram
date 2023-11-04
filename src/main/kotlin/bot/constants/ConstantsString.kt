@@ -1,6 +1,7 @@
 package bot.constants
 
 object ConstantsString {
+    const val showLinks = "Показать доступные ссылки"
     const val selectConnectMethod = "Выберите метод подключения"
     const val databaseConnectionSsh = "Подключение по SSH"
     const val databaseConnectionString = "Подключение по строке подключения"
