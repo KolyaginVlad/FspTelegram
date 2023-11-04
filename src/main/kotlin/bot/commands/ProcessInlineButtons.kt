@@ -31,6 +31,7 @@ class ProcessInlineButtons(private val api: Api) : Command {
     private val metrixCommand: MetrixCommand by Dependencies.di.instance()
     private val vacuumCommandProcess: VacuumCommandProcess by Dependencies.di.instance()
     private val getImageByLinkCommandProcess: GetImageByLinkCommandProcess by Dependencies.di.instance()
+    private val showMemoryCommandProcess: ShowMemoryCommandProcess by  Dependencies.di.instance()
     private val getLinksCommandProcess: GetLinksCommandProcess by Dependencies.di.instance()
     private val addLinkCommandProcess: AddLinkCommandProcess by Dependencies.di.instance()
     private val selectQueryCommandsProcess: SelectQueryCommandsProcess by Dependencies.di.instance()
@@ -176,7 +177,7 @@ class ProcessInlineButtons(private val api: Api) : Command {
             "5" -> TODO()
             "6" -> metrixCommand.start(context, message, database)
             "7" -> vacuumCommandProcess.start(context, message, database)
-            "8" -> {
+            "9" -> {
                 context.sendTextMessage(
                     message.message.chat.id,
                     "Выберите действие",

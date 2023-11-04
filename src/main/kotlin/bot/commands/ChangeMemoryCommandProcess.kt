@@ -58,7 +58,7 @@ class ChangeMemoryCommandProcess(
                     onSuccess = {
                         sendTextMessage(
                             data.message.chat.id,
-                            "Выберите какой параметр хотите изменить",
+                            "Выберите какой ещё параметр хотите изменить",
                             replyMarkup = ConstantsKeyboards.getChangeMemory(database)
                         )
                     }, onFailure = {

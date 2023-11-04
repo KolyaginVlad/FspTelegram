@@ -1,10 +1,7 @@
 package data
 
 import bot.constants.ConstantsKeyboards
-import data.models.CheckPointDto
-import data.models.DataBaseResponseDto
-import data.models.MetrixDto
-import data.models.VacuumDto
+import data.models.*
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery

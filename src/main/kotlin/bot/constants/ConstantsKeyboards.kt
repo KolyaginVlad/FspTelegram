@@ -115,7 +115,7 @@ object ConstantsKeyboards {
         row {
             dataButton(
                 ConstantsString.memory,
-                ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "8"
+                ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "9"
             )
         }
         row {
