@@ -29,12 +29,11 @@ object ConstantsKeyboards {
             dataButton(ConstantsSting.onRealTime, ButtonType.DB_OPTIONS.toString() + "&" + dataBase +"&3")
         }
         row {
-            dataButton(ConstantsSting.backBtn, ButtonType.BACK.toString() + "&" + dataBase +"&4")
-        }
-        row {
             dataButton(ConstantsSting.monitorCommon, ButtonType.DB_OPTIONS.toString() + "&" + dataBase +"&5")
         }
-
+        row {
+            dataButton(ConstantsSting.backBtn, ButtonType.BACK.toString() + "&" + dataBase +"&4")
+        }
     }
 
     val checkAndAddWithOffRealtime = inlineKeyboard {

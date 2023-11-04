@@ -9,68 +9,69 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onText
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
+import dev.inmo.tgbotapi.types.IdChatIdentifier
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 class AddDataBaseCommandProcess(
     private val api: Api
 ) : Command {
-    override suspend fun BehaviourContext.process() {
-        onText({info->
-            info.content.text == ConstantsSting.addDatabase
-        }) { info ->
-            val name = waitText(
+    override suspend fun BehaviourContext.process() {}
+    fun addDataBase(chatId: IdChatIdentifier, context: BehaviourContext) {
+        runBlocking {
+            val name = context.waitText(
                 SendTextMessage(
-                    info.chat.id,
+                    chatId,
                     "Введите имя базы данных"
                 )
             ).first().text
-            val host = waitText(
+            val host = context.waitText(
                 SendTextMessage(
-                    info.chat.id,
+                    chatId,
                     "Введите host"
                 )
             ).first().text
-            val port = waitText(
+            val port = context.waitText(
                 SendTextMessage(
-                    info.chat.id,
+                    chatId,
                     "Введите port",
                 )
             ).first().text
-            val database = waitText(
+            val database = context.waitText(
                 SendTextMessage(
-                    info.chat.id,
+                    chatId,
                     "Введите database",
                 )
             ).first().text
-            val username = waitText(
+            val username = context.waitText(
                 SendTextMessage(
-                    info.chat.id,
+                    chatId,
                     "Введите username для подключения к базе данных",
                 )
             ).first().text
-            val password = waitText(
+            val password = context.waitText(
                 SendTextMessage(
-                    info.chat.id,
+                    chatId,
                     "Введите password для подключения к базе данных",
                 )
             ).first().text
-            sendTextMessage(info.chat, "Подождите, пробуем получить доступ...")
-            api.sendConfig(info.chat.id.chatId, name, host, port, database, username, password).fold(
+            context.sendTextMessage(chatId, "Подождите, пробуем получить доступ...")
+            api.sendConfig(chatId.chatId, name, host, port, database, username, password).fold(
                 onSuccess = {
-                    sendTextMessage(
-                        info.chat,
+                    context.sendTextMessage(
+                        chatId,
                         "Доступ успешно получен",
                         replyMarkup = ConstantsKeyboards.getDataBasesKeyBoard(
-                            api.getDataBaseList(info.chat.id.chatId).fold(onSuccess = { it.map { it.name } }, onFailure = { listOf() })
+                            api.getDataBaseList(chatId.chatId).fold(onSuccess = { it.map { it.name } }, onFailure = { listOf() })
                         )
                     )
                 },
                 onFailure = {
-                    sendTextMessage(
-                        info.chat,
+                   context.sendTextMessage(
+                        chatId,
                         "Ошибка получения доступа, попробуйте снова добавить базу данных",
                         replyMarkup = ConstantsKeyboards.getDataBasesKeyBoard(
-                            api.getDataBaseList(info.chat.id.chatId).fold(onSuccess = { it.map { it.name } }, onFailure = { listOf() })
+                            api.getDataBaseList(chatId.chatId).fold(onSuccess = { it.map { it.name } }, onFailure = { listOf() })
                         )
                     )
                 }
