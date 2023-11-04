@@ -10,7 +10,6 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.requests.abstracts.asMultipartFile
 import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
 import java.io.File
-import java.time.LocalDateTime
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
@@ -26,10 +25,10 @@ class GetImageByLinkCommandProcess(
         api.visual(data.message.chat.id.chatId, database, data.data.split(ConstantsString.DELIMITER)[1]).fold(
             onSuccess = {
                 runCatching {
-                    val file = File("/tmp_image${LocalDateTime.now()}").apply {
+                    val file = File("tmp_image${data.message.chat.id.chatId}.png").apply {
                         createNewFile()
                     }
-                    val imageBytes = Base64.decode(it)
+                    val imageBytes = Base64.decode(it, 1, it.lastIndex)
                     file.writeBytes(imageBytes)
                     sendPhoto(
                         data.message.chat.id,
@@ -39,6 +38,7 @@ class GetImageByLinkCommandProcess(
 
                     file.delete()
                 }.onFailure { error ->
+                    error.printStackTrace()
                     sendTextMessage(
                         data.message.chat.id,
                         "Ошибка отправки файла",
