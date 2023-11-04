@@ -32,6 +32,10 @@ interface Api {
 
     suspend fun vacuum(userId: Long, dataBase: String): Result<VacuumDto>
 
+    suspend fun link(userId: Long): Result<String>
+
+    suspend fun visual(link: String): Result<String>
+
 }
 
 suspend fun Result<Unit>.foldMsg(context: BehaviourContext, data: MessageDataCallbackQuery, api: Api, dataBase: String) = this.fold(

@@ -20,15 +20,17 @@ class HttpRequester(private val client: HttpClient) : Api {
         val response = runCatching {
             client.post("${BASE_URL}credentials") {
                 contentType(ContentType.Application.Json)
-                setBody(ConfigExportDto(
-                    userId = userId,
-                    host = host,
-                    name = name,
-                    port = port,
-                    database = database,
-                    username = username,
-                    password = password
-                ))
+                setBody(
+                    ConfigExportDto(
+                        userId = userId,
+                        host = host,
+                        name = name,
+                        port = port,
+                        database = database,
+                        username = username,
+                        password = password
+                    )
+                )
             }
         }.onFailure {
             it.printStackTrace()
@@ -43,7 +45,7 @@ class HttpRequester(private val client: HttpClient) : Api {
 
     override suspend fun checkPoint(userId: Long, dataBase: String): Result<Unit> {
         val response = runCatching {
-            client.get("${BASE_URL}Activity/get-error-stats/$userId/$dataBase"){
+            client.get("${BASE_URL}Activity/get-error-stats/$userId/$dataBase") {
                 contentType(ContentType.Application.Json)
             }
         }.onFailure {
@@ -138,6 +140,40 @@ class HttpRequester(private val client: HttpClient) : Api {
             Result.failure(Exception())
         }
     }
+
+    override suspend fun link(userId: Long): Result<String> {
+        val response = runCatching {
+            client.get("${BASE_URL}Link/credential/$userId") {
+                contentType(ContentType.Application.Json)
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrNull()
+        println("link ${response?.status?.value}")
+        return if (response?.status?.value in 200..299 && response != null) {
+            Result.success(response.body())
+        } else {
+            Result.failure(Exception())
+        }
+    }
+
+    override suspend fun visual(link: String): Result<String> {
+        val response = runCatching {
+            client.get("${BASE_URL}/api/Visual/$link") {
+                contentType(ContentType.Application.Json)
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrNull()
+        println("link ${response?.status?.value}")
+        return if (response?.status?.value in 200..299 && response != null) {
+            Result.success(response.body())
+        } else {
+            Result.failure(Exception())
+        }
+    }
+
+
 }
 
 const val BASE_URL = "http://188.225.46.50:81/api/"
