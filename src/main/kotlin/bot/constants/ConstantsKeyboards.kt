@@ -1,6 +1,7 @@
 package bot.constants
 
 import bot.constants.ConstantsString.DELIMITER
+import dev.inmo.tgbotapi.extensions.utils.types.buttons.InlineKeyboardBuilder
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.dataButton
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.inlineKeyboard
 import dev.inmo.tgbotapi.types.buttons.SimpleKeyboardButton
@@ -167,8 +168,12 @@ object ConstantsKeyboards {
 
     fun repairTransactionKeyboard(database: String) = inlineKeyboard {
         row {
-            dataButton(ConstantsString.restartDb, ButtonType.REPAIR.toString() + DELIMITER + "-1" + DELIMITER + database)
+            dataButton(
+                ConstantsString.restartDb,
+                ButtonType.REPAIR.toString() + DELIMITER + "-1" + DELIMITER + database
+            )
         }
+        addCustomQueryButton(database)
     }
 
     fun getLogSettingsKeyboard(database: String, settings: List<Pair<String, Boolean>>) =
@@ -182,12 +187,39 @@ object ConstantsKeyboards {
                 }
             }
         }
+
+    fun getQueriesKeyboard(database: String, queriesNames: List<String>) =
+        inlineKeyboard {
+            queriesNames.forEach {
+                row {
+                    dataButton(it, join(ButtonType.SELECT_QUERY_NAME.name, database, it))
+                }
+            }
+            row {
+                dataButton(ConstantsString.addQuery, join(ButtonType.SELECT_QUERY_NAME.name, database, "-2"))
+            }
+            row {
+                dataButton(ConstantsString.backBtn, join(ButtonType.SELECT_QUERY_NAME.name, database, "-1"))
+            }
+        }
+
+    private fun InlineKeyboardBuilder.addCustomQueryButton(database: String) {
+        row {
+            dataButton(ConstantsString.customQuery, join(ButtonType.SELECT_QUERY.name, database))
+        }
+    }
+
+    private fun join(vararg args: String) =
+        args.joinToString(separator = DELIMITER) { it }
+
 }
 
 enum class ButtonType {
     SELECT_DATABASE_ADD, SELECT_DATABASE, DB_OPTIONS, BACK, MAIN_OPTIONS,
-    ADD_DB, COMMAND, CUSTOM_QUERY, LOG_SETTINGS, REPAIR, STOP_MONITORING,
-    MEMORY, CHANGE_MEMORY, LINK
+    ADD_DB, COMMAND,  LOG_SETTINGS, REPAIR, STOP_MONITORING,
+    MEMORY, CHANGE_MEMORY, LINK,
+    SELECT_QUERY,
+    SELECT_QUERY_NAME,
 }
 
 fun String.toButtonType() = ButtonType.valueOf(this)

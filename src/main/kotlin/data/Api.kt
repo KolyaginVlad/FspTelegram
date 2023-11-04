@@ -57,6 +57,14 @@ interface Api {
 
     suspend fun createUrl(name: String, url: String, chatId: Long, database: String): Result<Unit>
 
+    suspend fun getQueries(userId: Long, database: String): Result<List<String>>
+
+    suspend fun createQuery(name: String, query: String, chatId: Long, database: String): Result<Unit>
+
+    suspend fun getQueryByName(name: String, chatId: Long, database: String): Result<String>
+
+    suspend fun sendCustomQuery(query: String, userId: Long, database: String): Result<Unit>
+
 }
 
 
