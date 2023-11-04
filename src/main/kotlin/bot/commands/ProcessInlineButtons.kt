@@ -33,6 +33,9 @@ class ProcessInlineButtons(private val api: Api) : Command {
     private val getImageByLinkCommandProcess: GetImageByLinkCommandProcess by Dependencies.di.instance()
     private val getLinksCommandProcess: GetLinksCommandProcess by Dependencies.di.instance()
     private val addLinkCommandProcess: AddLinkCommandProcess by Dependencies.di.instance()
+    private val selectQueryCommandsProcess: SelectQueryCommandsProcess by Dependencies.di.instance()
+    private val addQueryCommandProcess: AddQueryCommandProcess by Dependencies.di.instance()
+    private val processQueryCommandProcess: ProcessQueryCommandProcess by Dependencies.di.instance()
 
     override suspend fun BehaviourContext.process() {
         onMessageDataCallbackQuery { message ->
@@ -86,9 +89,6 @@ class ProcessInlineButtons(private val api: Api) : Command {
                     )
 
                     ButtonType.COMMAND -> TODO()
-                    ButtonType.CUSTOM_QUERY -> {
-                        processCustomQuery.start(this, message)
-                    }
 
                     ButtonType.LOG_SETTINGS -> TODO()
                     ButtonType.SELECT_DATABASE_ADD -> selectDatabaseAdd(args[1], this, message)
@@ -105,6 +105,25 @@ class ProcessInlineButtons(private val api: Api) : Command {
                         }
                         else -> {
                             getImageByLinkCommandProcess.start(this, message, args[2])
+                        }
+                    }
+
+                    ButtonType.SELECT_QUERY -> selectQueryCommandsProcess.start(this, message, args[1])
+                    ButtonType.SELECT_QUERY_NAME -> when {
+                        args[2] == "-1" -> {
+                            sendTextMessage(
+                                message.message.chat.id,
+                                "Выберите действие",
+                                replyMarkup = ConstantsKeyboards.getDataBasesCommands(args[2])
+                            )
+                        }
+
+                        args[2] == "-2" -> {
+                            addQueryCommandProcess.start(this, message, args[1])
+                        }
+
+                        else -> {
+                            processQueryCommandProcess.start(this, message, args[1])
                         }
                     }
                 }

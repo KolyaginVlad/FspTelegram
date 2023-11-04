@@ -1,6 +1,8 @@
 package bot.constants
 
 object ConstantsString {
+    const val addQuery = "Добавить запрос"
+    const val customQuery = "Отослать запрос на сервер"
     const val addLink = "Добавить ссылку"
     const val showLinks = "Показать доступные ссылки"
     const val selectConnectMethod = "Выберите метод подключения"

@@ -44,7 +44,7 @@ object Dependencies {
 
         bindSingleton { VacuumCommandProcess(instance()) }
 
-        bindSingleton { ProcessCustomQuery() }
+        bindSingleton { ProcessCustomQuery(instance()) }
 
         bindSingleton { AddDatabaseSshCommandProcess(instance()) }
 
@@ -57,6 +57,12 @@ object Dependencies {
         bindSingleton { GetLinksCommandProcess(instance()) }
 
         bindSingleton { AddLinkCommandProcess(instance()) }
+
+        bindSingleton { SelectQueryCommandsProcess(instance()) }
+
+        bindSingleton { ProcessQueryCommandProcess(instance(), instance()) }
+
+        bindSingleton { AddQueryCommandProcess(instance()) }
 
         bindSingleton {
             consumer<String, String>(

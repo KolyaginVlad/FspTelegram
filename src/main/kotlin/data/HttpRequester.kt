@@ -163,6 +163,75 @@ class HttpRequester(private val client: HttpClient) : Api {
         }
     }
 
+    override suspend fun getQueries(userId: Long, database: String): Result<List<String>> {
+        println("getQueries $userId $database")
+        val response = runCatching {
+            client.get("${BASE_URL}Query/credential/$userId/$database") {
+                contentType(ContentType.Application.Json)
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrNull()
+        println("link ${response?.status?.value}")
+        return if (response?.status?.value in 200..299 && response != null) {
+            Result.success(response.body<List<QueryImportDto>>().map { it.name })
+        } else {
+            Result.failure(Exception())
+        }
+    }
+
+    override suspend fun createQuery(name: String, query: String, chatId: Long, database: String): Result<Unit> {
+        println("createQuery $name $query $chatId $database")
+        val response = runCatching {
+            client.post("${BASE_URL}Query") {
+                contentType(ContentType.Application.Json)
+                setBody(CreateQueryExportDto(chatId, name, database, query))
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrNull()
+        println("createQuery ${response?.status?.value}")
+        return if (response?.status?.value in 200..299 && response != null) {
+            Result.success(Unit)
+        } else {
+            Result.failure(Exception())
+        }
+    }
+
+    override suspend fun getQueryByName(name: String, chatId: Long, database: String): Result<String> {
+        println("getQueryByName $name $chatId $database")
+        val response = runCatching {
+            client.get("${BASE_URL}Query/$chatId/$database/$name") {
+                contentType(ContentType.Application.Json)
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrNull()
+        println("getQueryByName ${response?.status?.value}")
+        return if (response?.status?.value in 200..299 && response != null) {
+            Result.success(response.body<QueryImportDto>().query)
+        } else {
+            Result.failure(Exception())
+        }
+    }
+
+    override suspend fun sendCustomQuery(query: String, userId: Long, database: String): Result<Unit> {
+        println("${BASE_URL}custom/$userId/$database")
+        val response = runCatching {
+            client.post("${BASE_URL}custom") {
+                contentType(ContentType.Application.Json)
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrNull()
+        println("sendCustomQuery ${response?.status?.value}")
+        return if (response?.status?.value in 200..299 && response != null) {
+            Result.success(Unit)
+        } else {
+            Result.failure(Exception())
+        }
+    }
+
     override suspend fun visual(userId: Long, database: String, link: String): Result<String> {
         println("${BASE_URL}Visual/$userId/$database/$link")
         val response = runCatching {
