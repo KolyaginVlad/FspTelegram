@@ -161,6 +161,38 @@ class HttpRequester(private val client: HttpClient) : Api {
     }
 
 
+
+    override suspend fun connectBySsh(userId: Long, ssh: String): Result<Unit> {
+        val response = runCatching {
+            client.post("${BASE_URL}ssh") {
+                contentType(ContentType.Application.Json)
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrNull()
+        println("connectBySsh ${response?.status?.value}")
+        return if (response?.status?.value in 200..299 && response != null) {
+            Result.success(Unit)
+        } else {
+            Result.failure(Exception())
+        }
+    }
+
+    override suspend fun connectByConnectionString(userId: Long, connectionString: String): Result<Unit> {
+        val response = runCatching {
+            client.post("${BASE_URL}connection_string") {
+                contentType(ContentType.Application.Json)
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrNull()
+        println("connectByConnectionString ${response?.status?.value}")
+        return if (response?.status?.value in 200..299 && response != null) {
+            Result.success(Unit)
+        } else {
+            Result.failure(Exception())
+        }
+    }
 }
 
 const val BASE_URL = "http://188.225.46.50:81/api/"

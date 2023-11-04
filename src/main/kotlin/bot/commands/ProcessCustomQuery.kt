@@ -2,7 +2,7 @@ package bot.commands
 
 import bot.CommandWithData
 import bot.constants.ConstantsKeyboards
-import bot.constants.ConstantsSting
+import bot.constants.ConstantsString
 import dev.inmo.tgbotapi.extensions.api.send.sendMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
@@ -15,7 +15,7 @@ class ProcessCustomQuery : CommandWithData {
     override suspend fun BehaviourContext.process(data: MessageDataCallbackQuery) {
         val intPlaceholder = "&i"
         val stringPlaceholder = "&s"
-        val args = data.data.split(ConstantsSting.DELIMITER)
+        val args = data.data.split(ConstantsString.DELIMITER)
 //        val query = args[2]
         var query = "select * from table where id = &i"
         var placeholderIndex = query.indexOfFirst { it == '&' }

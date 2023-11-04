@@ -37,6 +37,10 @@ interface Api {
 
     suspend fun visual(link: String): Result<String>
 
+    suspend fun connectBySsh(userId: Long, ssh: String): Result<Unit>
+
+    suspend fun connectByConnectionString(userId: Long, connectionString: String): Result<Unit>
+
 }
 
 

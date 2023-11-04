@@ -1,6 +1,11 @@
 package bot.constants
 
-object ConstantsSting {
+object ConstantsString {
+    const val selectConnectMethod = "Выберите метод подключения"
+    const val databaseConnectionSsh = "Подключение по SSH"
+    const val databaseConnectionString = "Подключение по строке подключения"
+    const val databaseConnectionFile = "Подключение по файлу"
+    const val databaseConnectionConstructor = "Конструктор соединения"
     const val showSolution = "Показать решение"
     const val realtimeOff = "Отображение статуса realtime выключено"
     const val addDatabase = "Добавить базу данных"

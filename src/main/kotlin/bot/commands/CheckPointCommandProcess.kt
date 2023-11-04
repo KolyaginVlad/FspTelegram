@@ -2,7 +2,7 @@ package bot.commands
 
 import bot.CommandWithDataDataBase
 import bot.constants.ConstantsKeyboards
-import bot.constants.ConstantsSting
+import bot.constants.ConstantsString
 import data.Api
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
@@ -80,7 +80,7 @@ class CheckPointDateCommandProcess(
             val date = waitText(
                 SendTextMessage(
                     data.message.chat.id,
-                    ConstantsSting.enterDate,
+                    ConstantsString.enterDate,
                 )
             ).first().text
             api.checkPointOnDate(data.message.chat.id.chatId, database, date).fold(

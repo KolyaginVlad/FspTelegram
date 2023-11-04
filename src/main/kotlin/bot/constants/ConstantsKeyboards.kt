@@ -1,6 +1,6 @@
 package bot.constants
 
-import bot.constants.ConstantsSting.DELIMITER
+import bot.constants.ConstantsString.DELIMITER
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.dataButton
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.inlineKeyboard
 import dev.inmo.tgbotapi.types.buttons.SimpleKeyboardButton
@@ -15,23 +15,31 @@ object ConstantsKeyboards {
             }
         }
     )
-    val addDBBack = dev.inmo.tgbotapi.types.buttons.ReplyKeyboardMarkup(
-        matrix {
-            row {
-                +SimpleKeyboardButton("назад")
-            }
-        },
-        oneTimeKeyboard = true
-    )
+
+    val selectAddDatabaseMethodKeyboard = inlineKeyboard {
+        row {
+            dataButton(ConstantsString.databaseConnectionConstructor, "${ButtonType.SELECT_DATABASE_ADD}${DELIMITER}1")
+        }
+        row {
+            dataButton(ConstantsString.databaseConnectionSsh, "${ButtonType.SELECT_DATABASE_ADD}${DELIMITER}2")
+        }
+        row {
+            dataButton(ConstantsString.databaseConnectionString, "${ButtonType.SELECT_DATABASE_ADD}${DELIMITER}3")
+        }
+        row {
+            dataButton(ConstantsString.databaseConnectionFile, "${ButtonType.SELECT_DATABASE_ADD}${DELIMITER}4")
+        }
+    }
+
 
     val onlyAddDatabase = inlineKeyboard {
-        row { dataButton(ConstantsSting.addDatabase, ButtonType.ADD_DB.toString()) }
+        row { dataButton(ConstantsString.addDatabase, ButtonType.ADD_DB.toString()) }
     }
 
     fun getDataBasesCommands(dataBase: String) = inlineKeyboard {
         row {
             dataButton(
-                ConstantsSting.checkPointBtn,
+                ConstantsString.checkPointBtn,
                 ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "1"
             )
         }
@@ -43,7 +51,7 @@ object ConstantsKeyboards {
 //        }
         row {
             dataButton(
-                ConstantsSting.onRealTime,
+                ConstantsString.onRealTime,
                 ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "3"
             )
         }
@@ -55,26 +63,26 @@ object ConstantsKeyboards {
 //        }
         row {
             dataButton(
-                ConstantsSting.vacuumClean,
+                ConstantsString.vacuumClean,
                 ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "7"
             )
         }
         row {
-            dataButton(ConstantsSting.metrix, ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "6")
+            dataButton(ConstantsString.metrix, ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "6")
         }
         row {
             dataButton(
-                ConstantsSting.backBtn,
+                ConstantsString.backBtn,
                 ButtonType.BACK.toString() + DELIMITER + dataBase + DELIMITER + "4" + DELIMITER + ButtonType.DB_OPTIONS.toString()
             )
         }
     }
 
     val checkAndAddWithOffRealtime = inlineKeyboard {
-        row { dataButton(ConstantsSting.addDatabase, ConstantsSting.addDatabase) }
-        row { dataButton(ConstantsSting.checkPointBtn, ConstantsSting.checkPointBtn) }
-        row { dataButton(ConstantsSting.checkPointDatetBtn, ConstantsSting.checkPointDatetBtn) }
-        row { dataButton(ConstantsSting.offRealTime, ConstantsSting.offRealTime) }
+        row { dataButton(ConstantsString.addDatabase, ConstantsString.addDatabase) }
+        row { dataButton(ConstantsString.checkPointBtn, ConstantsString.checkPointBtn) }
+        row { dataButton(ConstantsString.checkPointDatetBtn, ConstantsString.checkPointDatetBtn) }
+        row { dataButton(ConstantsString.offRealTime, ConstantsString.offRealTime) }
     }
 
     fun getDataBasesKeyBoard(dataBases: List<String>) = inlineKeyboard {
@@ -83,13 +91,7 @@ object ConstantsKeyboards {
                 dataButton(it, ButtonType.SELECT_DATABASE.toString() + DELIMITER + it)
             }
         }
-        row { dataButton(ConstantsSting.addDatabase, ButtonType.ADD_DB.toString()) }
-    }
-
-    fun getLogInlineKeyboard(data: String) = inlineKeyboard {
-        row {
-            dataButton(ConstantsSting.showSolution, ButtonType.COMMAND.toString() + DELIMITER + data)
-        }
+        row { dataButton(ConstantsString.addDatabase, ButtonType.ADD_DB.toString()) }
     }
 
     val simpleAnswerKeyboard = dev.inmo.tgbotapi.types.buttons.ReplyKeyboardMarkup(
@@ -102,20 +104,9 @@ object ConstantsKeyboards {
         oneTimeKeyboard = true
     )
 
-    fun repairKeyboard(variants: List<String>) = inlineKeyboard {
-        variants.forEachIndexed { index, it ->
-            row {
-                dataButton(it, ButtonType.REPAIR.toString() + DELIMITER + index)
-            }
-        }
-        row {
-            dataButton(ConstantsSting.restartDb, ButtonType.REPAIR.toString() + DELIMITER + "-1")
-        }
-    }
-
     fun repairTransactionKeyboard(database: String) = inlineKeyboard {
         row {
-            dataButton(ConstantsSting.restartDb, ButtonType.REPAIR.toString() + DELIMITER + "-1" + DELIMITER + database)
+            dataButton(ConstantsString.restartDb, ButtonType.REPAIR.toString() + DELIMITER + "-1" + DELIMITER + database)
         }
     }
 
@@ -124,7 +115,7 @@ object ConstantsKeyboards {
             settings.forEachIndexed { index, (setting, isEnabled) ->
                 row {
                     dataButton(
-                        "$setting${if (isEnabled) ConstantsSting.onEmoji else ConstantsSting.offEmoji}",
+                        "$setting${if (isEnabled) ConstantsString.onEmoji else ConstantsString.offEmoji}",
                         "${ButtonType.LOG_SETTINGS}$DELIMITER$database$DELIMITER$index"
                     )
                 }
@@ -133,7 +124,7 @@ object ConstantsKeyboards {
 }
 
 enum class ButtonType {
-    SELECT_DATABASE, DB_OPTIONS, BACK, MAIN_OPTIONS, ADD_DB, COMMAND, CUSTOM_QUERY, LOG_SETTINGS, REPAIR
+    SELECT_DATABASE_ADD, SELECT_DATABASE, DB_OPTIONS, BACK, MAIN_OPTIONS, ADD_DB, COMMAND, CUSTOM_QUERY, LOG_SETTINGS, REPAIR
 }
 
 fun String.toButtonType() = ButtonType.valueOf(this)
