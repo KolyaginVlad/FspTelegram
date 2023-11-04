@@ -33,7 +33,7 @@ object Dependencies {
 
         bindSingleton { AddDataBaseCommandProcess(instance()) }
 
-        bindSingleton { OnCheckPointRealtimeCommandProcess(instance()) }
+        bindSingleton { OnCheckPointRealtimeCommandProcess(instance(),instance(),instance()) }
 
         bindSingleton { OffCheckPointRealtimeCommandsProcess() }
 

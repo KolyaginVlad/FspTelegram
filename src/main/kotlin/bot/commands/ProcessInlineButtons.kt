@@ -29,57 +29,59 @@ class ProcessInlineButtons(private val api: Api) : Command {
 
     override suspend fun BehaviourContext.process() {
         onMessageDataCallbackQuery { message ->
-            val args = message.data.split(ConstantsSting.DELIMITER)
-            println(args[0].toButtonType())
-            when (args[0].toButtonType()) {
-                ButtonType.SELECT_DATABASE -> {
-                    sendTextMessage(
-                        message.message.chat.id,
-                        "Выберите действие",
-                        replyMarkup = ConstantsKeyboards.getDataBasesCommands(args[1])
-                    )
-                }
-
-                ButtonType.DB_OPTIONS -> {
-                    println(args[2])
-                    DB_OPTIONS(
-                        args[2],
-                        args[1],
-                        message,
-                        this
-                    )
-                }
-
-                ButtonType.REPAIR -> {
-                    when (args[1]) {
-                        "-1" -> killTransactionCommandProcess.start(this, message, args[2])
-                        else -> {}
+            //if (RuntimeStorage.userRealtimeMap[message.message.chat.id.chatId] != true) {
+                val args = message.data.split(ConstantsSting.DELIMITER)
+                println(args[0].toButtonType())
+                when (args[0].toButtonType()) {
+                    ButtonType.SELECT_DATABASE -> {
+                        sendTextMessage(
+                            message.message.chat.id,
+                            "Выберите действие",
+                            replyMarkup = ConstantsKeyboards.getDataBasesCommands(args[1])
+                        )
                     }
+
+                    ButtonType.DB_OPTIONS -> {
+                        println(args[2])
+                        DB_OPTIONS(
+                            args[2],
+                            args[1],
+                            message,
+                            this
+                        )
+                    }
+
+                    ButtonType.REPAIR -> {
+                        when (args[1]) {
+                            "-1" -> killTransactionCommandProcess.start(this, message, args[2])
+                            else -> {}
+                        }
+                    }
+
+                    ButtonType.BACK -> BACK(args.last(), this, message)
+                    ButtonType.MAIN_OPTIONS -> TODO()
+                    ButtonType.ADD_DB -> addDataBaseCommandProcess.start(
+                        this,
+                        message,
+                    )
+
+                    ButtonType.COMMAND -> TODO()
+                    ButtonType.CUSTOM_QUERY -> {
+                        processCustomQuery.start(this, message)
+                    }
+
+                    ButtonType.LOG_SETTINGS -> TODO()
                 }
-
-                ButtonType.BACK -> BACK(args.last(), this, message)
-                ButtonType.MAIN_OPTIONS -> TODO()
-                ButtonType.ADD_DB -> addDataBaseCommandProcess.start(
-                    this,
-                    message,
-                )
-
-                ButtonType.COMMAND -> TODO()
-                ButtonType.CUSTOM_QUERY -> {
-                    processCustomQuery.start(this, message)
-                }
-
-                ButtonType.LOG_SETTINGS -> TODO()
+                answer(message)
             }
-            answer(message)
-        }
+       // }
     }
 
     private suspend fun DB_OPTIONS(method: String, database: String, message: MessageDataCallbackQuery, context: BehaviourContext) {
         when (method) {
             "1" -> checkPointProcess.start(context, message, database)
-            "2" -> checkPointDateProcess.start(context, message, database)
-            "3" -> onCheckPointProcess.start(context)
+          //  "2" -> checkPointDateProcess.start(context, message, database)
+            "3" -> onCheckPointProcess.start(context, message, database)
             "4" -> TODO()
             "5" -> TODO()
             "6" -> metrixCommand.start(context, message, database)

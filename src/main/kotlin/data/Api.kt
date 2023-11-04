@@ -1,6 +1,7 @@
 package data
 
 import bot.constants.ConstantsKeyboards
+import data.models.CheckPointDto
 import data.models.DataBaseResponseDto
 import data.models.MetrixDto
 import data.models.VacuumDto
@@ -21,7 +22,7 @@ interface Api {
         password: String
     ): Result<Unit>
 
-    suspend fun checkPoint(userId: Long, dataBase: String): Result<Unit>
+    suspend fun checkPoint(userId: Long, dataBase: String): Result<List<CheckPointDto>>
     suspend fun checkPointOnDate(userId: Long, dataBase: String, date: String): Result<Unit>
 
     suspend fun getDataBaseList(userId: Long): Result<List<DataBaseResponseDto>>
@@ -37,6 +38,7 @@ interface Api {
     suspend fun visual(link: String): Result<String>
 
 }
+
 
 suspend fun Result<Unit>.foldMsg(context: BehaviourContext, data: MessageDataCallbackQuery, api: Api, dataBase: String) = this.fold(
     onSuccess = { response ->

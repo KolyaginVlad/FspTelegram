@@ -35,24 +35,24 @@ object ConstantsKeyboards {
                 ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "1"
             )
         }
-        row {
-            dataButton(
-                ConstantsSting.checkPointDatetBtn,
-                ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "2"
-            )
-        }
+//        row {
+//            dataButton(
+//                ConstantsSting.checkPointDatetBtn,
+//                ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "2"
+//            )
+//        }
         row {
             dataButton(
                 ConstantsSting.onRealTime,
                 ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "3"
             )
         }
-        row {
-            dataButton(
-                ConstantsSting.monitorCommon,
-                ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "5"
-            )
-        }
+//        row {
+//            dataButton(
+//                ConstantsSting.monitorCommon,
+//                ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "5"
+//            )
+//        }
         row {
             dataButton(
                 ConstantsSting.vacuumClean,

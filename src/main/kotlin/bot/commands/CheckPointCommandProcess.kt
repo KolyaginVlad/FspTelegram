@@ -16,28 +16,60 @@ class CheckPointCommandProcess(
     private val api: Api
 ) : CommandWithDataDataBase {
     override suspend fun BehaviourContext.process(data: MessageDataCallbackQuery, database: String) {
-        runBlocking {
-            api.checkPoint(data.message.chat.id.chatId, database).fold(
-                onSuccess = { response ->
-                    sendTextMessage(
-                        data.message.chat.id,
-                        response.toString(),
-                        replyMarkup = ConstantsKeyboards.getDataBasesCommands(database)
-                    )
-                },
-                onFailure = { error ->
-                    sendTextMessage(
-                        data.message.chat.id,
-                        "Ошибка получения доступа",
-                        replyMarkup = ConstantsKeyboards.getDataBasesKeyBoard(
-                            api.getDataBaseList(data.message.chat.id.chatId)
-                                .fold(onSuccess = { it.map { it.name } }, onFailure = { listOf() })
+
+        api.checkPoint(data.message.chat.id.chatId, database).fold(
+            onSuccess = { responses ->
+                responses.forEach { response ->
+                    println("checkPoint $response")
+                    when (response.messageType) {
+                        "Ok" -> sendTextMessage(
+                            data.message.chat.id,
+                            "База данных в порядке",
+                            replyMarkup = ConstantsKeyboards.getDataBasesCommands(database)
                         )
-                    )
+
+                        "Lock" -> sendTextMessage(
+                            data.message.chat.id,
+                            """
+                            Обнаружен deadlock в базе данных ${response.dataBase}!
+                            PID: ${response.pid}
+                            Последнее время обновления состояния: ${response.stateLastChangeDate}
+                            """.trimIndent(),
+                            replyMarkup = ConstantsKeyboards.repairTransactionKeyboard(
+                                response.dataBase!!,
+                            )
+                        )
+
+                        else -> sendTextMessage(
+                            data.message.chat.id,
+                            """
+                            Обнаружен неизвестная ошибка в базе данных ${response.dataBase}!
+                            PID: ${response.pid}
+                            Последнее время обновления состояния: ${response.stateLastChangeDate}
+                            """.trimIndent(),
+                            replyMarkup = ConstantsKeyboards.getDataBasesCommands(database)
+                        )
+                    }
                 }
-            )
-        }
+                sendTextMessage(
+                    data.message.chat.id,
+                    "Выберите действие",
+                    replyMarkup = ConstantsKeyboards.getDataBasesCommands(database)
+                )
+            },
+            onFailure = { error ->
+                sendTextMessage(
+                    data.message.chat.id,
+                    "Ошибка получения доступа",
+                    replyMarkup = ConstantsKeyboards.getDataBasesKeyBoard(
+                        api.getDataBaseList(data.message.chat.id.chatId)
+                            .fold(onSuccess = { it.map { it.name } }, onFailure = { listOf() })
+                    )
+                )
+            }
+        )
     }
+
 }
 
 class CheckPointDateCommandProcess(

@@ -39,30 +39,32 @@ class BotManager {
                     val message = repeatUntilSome {
                         consumer.poll(Duration.ofMillis(1000))
                     }
-                    message.forEach {
-                        val value = it.value().toString()
-                        val json = jsonParser.parseToJsonElement(value)
-                        when (json.jsonObject["MessageType"]?.toString()) {
-                            "\"LockStatus\"" -> {
-                                val lockError: LockError = jsonParser.decodeFromString(value)
-                                lockError.lockInfo.forEach { info ->
-                                    bot.sendTextMessage(
-                                        ChatId(info.userId),
-                                        """
+                    runCatching {
+                        message.forEach {
+                            val value = it.value().toString()
+                            val json = jsonParser.parseToJsonElement(value)
+                            when (json.jsonObject["MessageType"]?.toString()) {
+                                "\"LockStatus\"" -> {
+                                    val lockError: LockError = jsonParser.decodeFromString(value)
+                                    lockError.lockInfo.forEach { info ->
+                                        bot.sendTextMessage(
+                                            ChatId(info.userId),
+                                            """
                                     Обнаружен deadlock в базе данных ${info.database}!
                                     PID: ${info.pid}
                                     Последнее время обновления состояния: ${info.lastChangeDate}
                                     """.trimIndent(),
-                                        replyMarkup = ConstantsKeyboards.repairTransactionKeyboard(
-                                            info.database,
+                                            replyMarkup = ConstantsKeyboards.repairTransactionKeyboard(
+                                                info.database,
+                                            )
                                         )
-                                    )
 
+                                    }
                                 }
-                            }
 
-                            else -> {
-                                println("Unresolved error ${json.jsonObject["MessageType"]?.toString()}")
+                                else -> {
+                                    println("Unresolved error ${json.jsonObject["MessageType"]?.toString()}")
+                                }
                             }
                         }
                     }
@@ -73,8 +75,8 @@ class BotManager {
                 println(getMe())
                 startCommandProcess.start(this)
                 //checkPointProcess.start(this)
-                onCheckPointProcess.start(this)
-                offCheckPointProcess.start(this)
+                //onCheckPointProcess.start(this)
+                // offCheckPointProcess.start(this)
                 //addDataBaseCommandProcess.start(this)
                 processInlineButtons.start(this)
             }.join()

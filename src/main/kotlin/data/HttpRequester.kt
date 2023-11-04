@@ -43,7 +43,7 @@ class HttpRequester(private val client: HttpClient) : Api {
         }
     }
 
-    override suspend fun checkPoint(userId: Long, dataBase: String): Result<Unit> {
+    override suspend fun checkPoint(userId: Long, dataBase: String): Result<List<CheckPointDto>> {
         val response = runCatching {
             client.get("${BASE_URL}Activity/get-error-stats/$userId/$dataBase") {
                 contentType(ContentType.Application.Json)
@@ -52,28 +52,15 @@ class HttpRequester(private val client: HttpClient) : Api {
             it.printStackTrace()
         }.getOrNull()
         println("checkPoint ${response?.status?.value}")
-        return if (response?.status?.value in 200..299) {
-            Result.success(Unit)
+        return if (response?.status?.value in 200..299 && response != null) {
+            Result.success(response.body<List<CheckPointDto>>())
         } else {
             Result.failure(Exception())
         }
     }
 
     override suspend fun checkPointOnDate(userId: Long, dataBase: String, date: String): Result<Unit> {
-        val response = runCatching {
-            client.post("TODO()") {
-                contentType(ContentType.Application.Json)
-                setBody(CheckPointOnDateDto(userId, dataBase, date))
-            }
-        }.onFailure {
-            it.printStackTrace()
-        }.getOrNull()
-        println("sendConfig ${response?.status?.value}")
-        return if (response?.status?.value in 200..299) {
-            Result.success(Unit)
-        } else {
-            Result.failure(Exception())
-        }
+        TODO()
     }
 
     override suspend fun getDataBaseList(userId: Long): Result<List<DataBaseResponseDto>> {

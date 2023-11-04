@@ -1,38 +1,68 @@
 package bot.commands
 
-import bot.Command
+import Dependencies
+import bot.CommandWithDataDataBase
 import bot.RuntimeStorage
 import bot.constants.ConstantsKeyboards
-import bot.constants.ConstantsSting
 import data.Api
+import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
-import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
-import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onText
-import dev.inmo.tgbotapi.requests.send.SendTextMessage
+import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import org.kodein.di.instance
 
 class OnCheckPointRealtimeCommandProcess(
-    private val api: Api
-): Command {
-    override suspend fun BehaviourContext.process() {
-        onText({
-            it.content.text == ConstantsSting.onRealTime
-        }) {
-            RuntimeStorage.userRealtimeMap[it.chat.id.chatId] = true
-            val database = waitText(
-                SendTextMessage(
-                    it.chat.id,
-                    ConstantsSting.enterDb,
-                    replyMarkup = ConstantsKeyboards.checkAndAddWithOffRealtime
-                ),
-            ).first().text
-            launch {
-                while (RuntimeStorage.userRealtimeMap[it.chat.id.chatId] == true) {
-                    delay(15000)
-                    api.checkPoint(it.chat.id.chatId, database)
-                }
+    private val api: Api,
+    private val corutineScope: CoroutineScope,
+    private val jsonParser: Json
+) : CommandWithDataDataBase {
+    private val metrixCommand: MetrixCommand by Dependencies.di.instance()
+    override suspend fun BehaviourContext.process(data: MessageDataCallbackQuery, database: String) {
+        RuntimeStorage.userRealtimeMap[data.message.chat.id.chatId] = true
+        val context = this
+        corutineScope.launch {
+            while (RuntimeStorage.userRealtimeMap[data.message.chat.id.chatId] == true) {
+                delay(15000)
+                api.checkPoint(data.message.chat.id.chatId, database).fold(
+                    onSuccess = { responses ->
+                        responses.forEach { response ->
+                            when (response.messageType) {
+                                "Ok" ->
+                                    sendTextMessage(
+                                        data.message.chat.id,
+                                        "Ok")//metrixCommand.start(context, data, response.dataBase)
+                                "Lock" -> sendTextMessage(
+                                    data.message.chat.id,
+                                    """
+                            Обнаружен deadlock в базе данных ${response.dataBase}!
+                            PID: ${response.pid}
+                            Последнее время обновления состояния: ${response.stateLastChangeDate}
+                            """.trimIndent(),
+                                    replyMarkup = ConstantsKeyboards.repairTransactionKeyboard(
+                                        response.dataBase!!,
+                                    )
+                                )
+
+                                else -> sendTextMessage(
+                                    data.message.chat.id,
+                                    """
+                            Обнаружен неизвестная ошибка в базе данных ${response.dataBase}!
+                            PID: ${response.pid}
+                            Последнее время обновления состояния: ${response.stateLastChangeDate}
+                            """.trimIndent(),
+                                    replyMarkup = ConstantsKeyboards.getDataBasesCommands(database)
+                                )
+                            }
+                        }
+                    }, onFailure = { throwable ->
+                        sendTextMessage(
+                            data.message.chat.id,
+                            "Статус не получен",
+                        )
+                    })
             }
         }
     }
