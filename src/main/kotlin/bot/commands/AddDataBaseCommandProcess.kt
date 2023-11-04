@@ -3,6 +3,7 @@ package bot.commands
 import bot.CommandWithData
 import bot.constants.ConstantsKeyboards
 import bot.constants.ConstantsKeyboards.addDBBack
+import bot.constants.ConstantsKeyboards.empty
 import data.Api
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
@@ -81,12 +82,14 @@ class AddDataBaseCommandProcess(
                 context.sendTextMessage(
                     chatId,
                     "Доступ успешно получен",
+                    replyMarkup = empty
                 )
             },
             onFailure = {
                 context.sendTextMessage(
                     chatId,
                     "Ошибка получения доступа, попробуйте снова добавить базу данных",
+                    replyMarkup = empty
                 )
             }
         )
