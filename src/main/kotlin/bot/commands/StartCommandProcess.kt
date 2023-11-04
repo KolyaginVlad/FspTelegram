@@ -27,11 +27,11 @@ class StartCommandProcess(
             launch {
                 while (true) {
                     val message = repeatUntilSome {
-                        consumer.poll(400.milliseconds.toJavaDuration()).map { java.lang.String(it.value()) }
+                        consumer.poll(400.milliseconds.toJavaDuration()).map { it.value().toString() }
                             .firstOrNull()
                     }
-                    println(message.toString() + "${info.chat}")
-                    sendTextMessage(info.chat, "$message")
+                    println(message + "${info.chat}")
+                    sendTextMessage(info.chat, message)
                 }
             }
             api.getDataBaseList(info.chat.id.chatId).fold(
