@@ -4,6 +4,7 @@ import data.Api
 import data.HttpRequester
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.CoroutineScope
@@ -55,6 +56,8 @@ object Dependencies {
 
         bindSingleton { GetLinksCommandProcess(instance()) }
 
+        bindSingleton { AddLinkCommandProcess(instance()) }
+
         bindSingleton {
             consumer<String, String>(
                 mapOf(
@@ -73,6 +76,9 @@ object Dependencies {
                     json(
                         instance<Json>()
                     )
+                }
+                install(HttpTimeout) {
+                    requestTimeoutMillis = 10000
                 }
             }
         }

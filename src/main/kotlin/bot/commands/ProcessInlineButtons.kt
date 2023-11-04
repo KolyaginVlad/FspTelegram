@@ -32,6 +32,7 @@ class ProcessInlineButtons(private val api: Api) : Command {
     private val vacuumCommandProcess: VacuumCommandProcess by Dependencies.di.instance()
     private val getImageByLinkCommandProcess: GetImageByLinkCommandProcess by Dependencies.di.instance()
     private val getLinksCommandProcess: GetLinksCommandProcess by Dependencies.di.instance()
+    private val addLinkCommandProcess: AddLinkCommandProcess by Dependencies.di.instance()
 
     override suspend fun BehaviourContext.process() {
         onMessageDataCallbackQuery { message ->
@@ -91,7 +92,21 @@ class ProcessInlineButtons(private val api: Api) : Command {
 
                     ButtonType.LOG_SETTINGS -> TODO()
                     ButtonType.SELECT_DATABASE_ADD -> selectDatabaseAdd(args[1], this, message)
-                ButtonType.LINK -> getImageByLinkCommandProcess.start(this, message, args[2])
+                    ButtonType.LINK -> when {
+                        args[1] == "-1" -> {
+                            sendTextMessage(
+                                message.message.chat.id,
+                                "Выберите действие",
+                                replyMarkup = ConstantsKeyboards.getDataBasesCommands(args[2])
+                            )
+                        }
+                        args[1] == "-2" -> {
+                            addLinkCommandProcess.start(this, message, args[2])
+                        }
+                        else -> {
+                            getImageByLinkCommandProcess.start(this, message, args[2])
+                        }
+                    }
                 }
                 answer(message)
             }

@@ -112,6 +112,12 @@ object ConstantsKeyboards {
                 dataButton(it, "${ButtonType.LINK}$DELIMITER$it$DELIMITER$database")
             }
         }
+        row {
+            dataButton(ConstantsString.addLink, "${ButtonType.LINK}$DELIMITER-2$DELIMITER$database")
+        }
+        row {
+            dataButton(ConstantsString.backBtn, "${ButtonType.LINK}$DELIMITER-1$DELIMITER$database")
+        }
     }
 
     val simpleAnswerKeyboard = dev.inmo.tgbotapi.types.buttons.ReplyKeyboardMarkup(

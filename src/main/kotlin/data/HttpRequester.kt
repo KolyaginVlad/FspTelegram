@@ -3,6 +3,7 @@ package data
 import data.models.*
 import io.ktor.client.*
 import io.ktor.client.call.*
+import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 
@@ -138,15 +139,37 @@ class HttpRequester(private val client: HttpClient) : Api {
         }.getOrNull()
         println("link ${response?.status?.value}")
         return if (response?.status?.value in 200..299 && response != null) {
-            Result.success(response.body<List<LinkDto>>().map { it.name })
+            Result.success(response.body<List<LinkImportDto>>().map { it.name })
+        } else {
+            Result.failure(Exception())
+        }
+    }
+
+    override suspend fun createUrl(name: String, url: String, chatId: Long, database: String): Result<Unit> {
+        println("createUrl $name $url $chatId $database")
+        val response = runCatching {
+            client.post("${BASE_URL}Link") {
+                contentType(ContentType.Application.Json)
+                setBody(CreateUrlExportDto(chatId, name, database, url))
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrNull()
+        println("createUrl ${response?.status?.value}")
+        return if (response?.status?.value in 200..299 && response != null) {
+            Result.success(Unit)
         } else {
             Result.failure(Exception())
         }
     }
 
     override suspend fun visual(userId: Long, database: String, link: String): Result<String> {
+        println("${BASE_URL}Visual/$userId/$database/$link")
         val response = runCatching {
-            client.get("${BASE_URL}/api/Visual/$userId/$database/$link") {
+            client.get("${BASE_URL}Visual/$userId/$database/$link") {
+                timeout {
+                    requestTimeoutMillis = 30000
+                }
                 contentType(ContentType.Application.Json)
             }
         }.onFailure {

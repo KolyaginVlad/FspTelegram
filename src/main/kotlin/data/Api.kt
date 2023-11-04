@@ -41,6 +41,8 @@ interface Api {
 
     suspend fun connectByConnectionString(userId: Long, connectionString: String): Result<Unit>
 
+    suspend fun createUrl(name: String, url: String, chatId: Long, database: String): Result<Unit>
+
 }
 
 
