@@ -96,7 +96,7 @@ class HttpRequester(private val client: HttpClient) : Api {
         }
     }
 
-    override suspend fun getMetrix(dataBase: String,userId: Long): Result<MetrixDto> {
+    override suspend fun getMetrix(dataBase: String, userId: Long): Result<MetrixDto> {
         val response = runCatching {
             client.get("${BASE_URL}credentials/stat-database/$userId/$dataBase") {
                 contentType(ContentType.Application.Json)
@@ -161,7 +161,6 @@ class HttpRequester(private val client: HttpClient) : Api {
     }
 
 
-
     override suspend fun connectBySsh(userId: Long, ssh: String): Result<Unit> {
         val response = runCatching {
             client.post("${BASE_URL}ssh") {
@@ -189,6 +188,49 @@ class HttpRequester(private val client: HttpClient) : Api {
         println("connectByConnectionString ${response?.status?.value}")
         return if (response?.status?.value in 200..299 && response != null) {
             Result.success(Unit)
+        } else {
+            Result.failure(Exception())
+        }
+    }
+
+    override suspend fun changeMemory(
+        userId: Long,
+        dataBase: String,
+        effectiveCacheSize: String,
+        maintenanceWorkMemory: String,
+        workMemory: String,
+        memoryLimit: String
+    ): Result<Unit> {
+        val response = runCatching {
+            client.post("${BASE_URL}Memory/memory/$userId/$dataBase") {
+                contentType(ContentType.Application.Json)
+                setBody(
+                    MemoryResponseDto(
+                        effectiveCacheSize, maintenanceWorkMemory, workMemory, memoryLimit
+                    )
+                )
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrNull()
+        println("changeMemory ${response?.status?.value}")
+        return if (response?.status?.value in 200..299) {
+            Result.success(Unit)
+        } else {
+            Result.failure(Exception())
+        }
+    }
+
+    override suspend fun getMemory(userId: Long, dataBase: String): Result<MemoryDto> {
+        val response = runCatching {
+            client.get("${BASE_URL}Memory/memory/$userId/$dataBase") {
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrNull()
+        println("getMemory ${response?.status?.value}")
+        return if (response?.status?.value in 200..299 && response != null) {
+            Result.success(response.body())
         } else {
             Result.failure(Exception())
         }

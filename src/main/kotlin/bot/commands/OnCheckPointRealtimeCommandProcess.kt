@@ -33,15 +33,15 @@ class OnCheckPointRealtimeCommandProcess(
                                     onSuccess = { response ->
                                         sendTextMessage(
                                             data.message.chat.id,
-                                            response.toString(),
-                                            replyMarkup = ConstantsKeyboards.stop
+                                            "База данных в порядке, значения метрик следующие: \n$response",
+                                            replyMarkup = ConstantsKeyboards.getStop(database)
                                         )
                                     },
                                     onFailure = { error ->
                                         sendTextMessage(
                                             data.message.chat.id,
                                             "База данных в порядке, невозможно получить метрики",
-                                            replyMarkup = ConstantsKeyboards.stop
+                                            replyMarkup = ConstantsKeyboards.getStop(database)
                                         )
                                     }
                                 )

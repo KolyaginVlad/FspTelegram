@@ -1,4 +1,3 @@
-
 import bot.commands.*
 import data.Api
 import data.HttpRequester
@@ -31,9 +30,13 @@ object Dependencies {
 
         bindSingleton { CheckPointCommandProcess(instance()) }
 
+        bindSingleton { ShowMemoryCommandProcess(instance()) }
+
+        bindSingleton { ChangeMemoryCommandProcess(instance()) }
+
         bindSingleton { AddDataBaseCommandProcess(instance()) }
 
-        bindSingleton { OnCheckPointRealtimeCommandProcess(instance(),instance(),instance()) }
+        bindSingleton { OnCheckPointRealtimeCommandProcess(instance(), instance(), instance()) }
 
         bindSingleton { OffCheckPointRealtimeCommandsProcess() }
 
@@ -73,10 +76,12 @@ object Dependencies {
             }
         }
 
-        bindSingleton { Json {
-            ignoreUnknownKeys = true
-            encodeDefaults = true
-        } }
+        bindSingleton {
+            Json {
+                ignoreUnknownKeys = true
+                encodeDefaults = true
+            }
+        }
     }
 
     const val BOOTSTRAP_SERVERS_CONFIG = "http://188.225.46.50:9092"

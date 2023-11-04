@@ -15,10 +15,37 @@ object ConstantsKeyboards {
             }
         }
     )
-
-    val stop = inlineKeyboard {
+    fun getMemory(database: String) = inlineKeyboard {
         row {
-            dataButton(ConstantsString.stopBtn, "${ButtonType.STOP_MONITORING}${DELIMITER}1")
+            dataButton(ConstantsString.changeMemory, "${ButtonType.MEMORY}${DELIMITER}1${DELIMITER}${database}")
+        }
+        row {
+            dataButton(ConstantsString.showMemory, "${ButtonType.MEMORY}${DELIMITER}2${DELIMITER}${database}")
+        }
+        row {
+            dataButton(ConstantsString.backBtn, "${ButtonType.BACK}${DELIMITER}-1${DELIMITER}${database}${DELIMITER}${ButtonType.MEMORY}")
+        }
+    }
+    fun getChangeMemory(database:String) = inlineKeyboard {
+        row {
+            dataButton(ConstantsString.maintenanceWorkMemory, "${ButtonType.CHANGE_MEMORY}${DELIMITER}1${DELIMITER}${database}")
+        }
+        row {
+            dataButton(ConstantsString.memoryLimit, "${ButtonType.CHANGE_MEMORY}${DELIMITER}2${DELIMITER}${database}")
+        }
+        row {
+            dataButton(ConstantsString.workMemory, "${ButtonType.CHANGE_MEMORY}${DELIMITER}3${DELIMITER}${database}")
+        }
+        row {
+            dataButton(ConstantsString.effectiveCacheSize, "${ButtonType.CHANGE_MEMORY}${DELIMITER}4${DELIMITER}${database}")
+        }
+        row {
+            dataButton(ConstantsString.backBtn, "${ButtonType.BACK}${DELIMITER}-1${DELIMITER}${database}${DELIMITER}${ButtonType.CHANGE_MEMORY}")
+        }
+    }
+    fun  getStop(dataBase:String) = inlineKeyboard {
+        row {
+            dataButton(ConstantsString.stopBtn, "${ButtonType.STOP_MONITORING}${DELIMITER}1${DELIMITER}$dataBase")
         }
     }
 
@@ -61,12 +88,17 @@ object ConstantsKeyboards {
                 ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "3"
             )
         }
+
 //        row {
 //            dataButton(
 //                ConstantsSting.monitorCommon,
 //                ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "5"
 //            )
 //        }
+
+        row {
+            dataButton(ConstantsString.metrix, ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "6")
+        }
         row {
             dataButton(
                 ConstantsString.vacuumClean,
@@ -74,7 +106,10 @@ object ConstantsKeyboards {
             )
         }
         row {
-            dataButton(ConstantsString.metrix, ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "6")
+            dataButton(
+                ConstantsString.memory,
+                ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "8"
+            )
         }
         row {
             dataButton(
@@ -130,7 +165,10 @@ object ConstantsKeyboards {
 }
 
 enum class ButtonType {
-    SELECT_DATABASE_ADD, SELECT_DATABASE, DB_OPTIONS, BACK, MAIN_OPTIONS, ADD_DB, COMMAND, CUSTOM_QUERY, LOG_SETTINGS, REPAIR, STOP_MONITORING
+    SELECT_DATABASE_ADD, SELECT_DATABASE, DB_OPTIONS, BACK, MAIN_OPTIONS,
+    ADD_DB, COMMAND, CUSTOM_QUERY, LOG_SETTINGS, REPAIR, STOP_MONITORING,
+    MEMORY, CHANGE_MEMORY
+
 }
 
 fun String.toButtonType() = ButtonType.valueOf(this)

@@ -19,10 +19,10 @@ import org.kodein.di.instance
 class ProcessInlineButtons(private val api: Api) : Command {
     private val checkPointProcess: CheckPointCommandProcess by Dependencies.di.instance()
     private val onCheckPointProcess: OnCheckPointRealtimeCommandProcess by Dependencies.di.instance()
-    private val offCheckPointProcess: OffCheckPointRealtimeCommandsProcess by Dependencies.di.instance()
     private val killTransactionCommandProcess: KillTransactionCommandProcess by Dependencies.di.instance()
     private val checkPointDateProcess: CheckPointDateCommandProcess by Dependencies.di.instance()
     private val scope: CoroutineScope by Dependencies.di.instance()
+    private val changeMemoryCommandProcess: ChangeMemoryCommandProcess by Dependencies.di.instance()
     private val addDataBaseCommandProcess: AddDataBaseCommandProcess by Dependencies.di.instance()
     private val addDatabaseSshCommandProcess: AddDatabaseSshCommandProcess by Dependencies.di.instance()
     private val addDatabaseConnectingStringCommandProcess: AddDatabaseConnectingStringCommandProcess by Dependencies.di.instance()
@@ -30,7 +30,7 @@ class ProcessInlineButtons(private val api: Api) : Command {
     private val processCustomQuery: ProcessCustomQuery by Dependencies.di.instance()
     private val metrixCommand: MetrixCommand by Dependencies.di.instance()
     private val vacuumCommandProcess: VacuumCommandProcess by Dependencies.di.instance()
-
+    private val showMemoryCommandProcess: ShowMemoryCommandProcess by Dependencies.di.instance()
     override suspend fun BehaviourContext.process() {
         onMessageDataCallbackQuery { message ->
             val args = message.data.split(ConstantsString.DELIMITER)
@@ -53,7 +53,7 @@ class ProcessInlineButtons(private val api: Api) : Command {
                         sendTextMessage(
                             message.message.chat.id,
                             "Выберите действие",
-                            replyMarkup = ConstantsKeyboards.getDataBasesCommands(args[1])
+                            replyMarkup = ConstantsKeyboards.getDataBasesCommands(args.last())
                         )
                     }
 
@@ -74,7 +74,7 @@ class ProcessInlineButtons(private val api: Api) : Command {
                         }
                     }
 
-                    ButtonType.BACK -> BACK(args.last(), this, message)
+                    ButtonType.BACK -> BACK(args.last(), this, message, args[args.lastIndex-1])
                     ButtonType.MAIN_OPTIONS -> TODO()
                     ButtonType.ADD_DB -> sendTextMessage(
                         message.message.chat,
@@ -89,6 +89,23 @@ class ProcessInlineButtons(private val api: Api) : Command {
 
                     ButtonType.LOG_SETTINGS -> TODO()
                     ButtonType.SELECT_DATABASE_ADD -> selectDatabaseAdd(args[1], this, message)
+                    ButtonType.MEMORY -> when (args[1]) {
+                        "1" -> {
+                             sendTextMessage(
+                                message.message.chat.id,
+                                "Выберите какой параметр хотите изменить",
+                                replyMarkup = ConstantsKeyboards.getChangeMemory(args.last())
+                            )
+                        }
+
+                        "2" -> {
+                            showMemoryCommandProcess.start(this, message, args.last())
+                        }
+                    }
+
+                    ButtonType.CHANGE_MEMORY -> {
+                        changeMemoryCommandProcess.start(this, message, args.last(), args[1])
+                    }
                 }
                 answer(message)
             }
@@ -122,6 +139,14 @@ class ProcessInlineButtons(private val api: Api) : Command {
             "5" -> TODO()
             "6" -> metrixCommand.start(context, message, database)
             "7" -> vacuumCommandProcess.start(context, message, database)
+            "8" -> {
+                context.sendTextMessage(
+                    message.message.chat.id,
+                    "Выберите действие",
+                    replyMarkup = ConstantsKeyboards.getMemory(database)
+                )
+            }
+
             else -> {}
         }
     }
@@ -132,10 +157,24 @@ class ProcessInlineButtons(private val api: Api) : Command {
         }
     }
 
-    suspend fun BACK(now: String, context: BehaviourContext, message: MessageDataCallbackQuery) {
+    suspend fun BACK(now: String, context: BehaviourContext, message: MessageDataCallbackQuery, database: String) {
         println("BACK $now")
         when (now) {
-            "DB_OPTIONS" -> {
+            "CHANGE_MEMORY" -> {
+                context.sendTextMessage(
+                    message.message.chat.id,
+                    "Выберите действие",
+                    replyMarkup = ConstantsKeyboards.getMemory(database)
+                )
+            }
+            "MEMORY"->{
+                context.sendTextMessage(
+                    message.message.chat.id,
+                    "Выберите действие",
+                    replyMarkup = ConstantsKeyboards.getDataBasesCommands(database)
+                )
+            }
+            else -> {
                 context.sendTextMessage(
                     message.message.chat.id,
                     "Выберите действие",
@@ -145,20 +184,6 @@ class ProcessInlineButtons(private val api: Api) : Command {
                     )
                 )
             }
-
-            "ADD_DB" -> {
-
-                context.sendTextMessage(
-                    message.message.chat.id,
-                    "Выберите действие",
-                    replyMarkup = ConstantsKeyboards.getDataBasesKeyBoard(
-                        api.getDataBaseList(message.message.chat.id.chatId)
-                            .fold(onSuccess = { it.map { it.name } }, onFailure = { listOf() })
-                    )
-                )
-            }
-
-            else -> {}
         }
     }
 }
