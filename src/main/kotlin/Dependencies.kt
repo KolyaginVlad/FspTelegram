@@ -25,7 +25,7 @@ object Dependencies {
 
         bindSingleton { CoroutineScope(Dispatchers.IO + SupervisorJob()) }
 
-        bindSingleton { StartCommandProcess(instance(), instance()) }
+        bindSingleton { StartCommandProcess(instance()) }
 
         bindSingleton { CheckPointCommandProcess(instance()) }
 
@@ -36,6 +36,8 @@ object Dependencies {
         bindSingleton { OffCheckPointRealtimeCommandsProcess() }
 
         bindSingleton { ProcessInlineButtons(instance()) }
+
+        bindSingleton { ProcessCustomQuery() }
 
 //        bindSingleton {
 //            val streams = kafkaStreams(
@@ -57,8 +59,8 @@ object Dependencies {
                     ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to BOOTSTRAP_SERVERS_CONFIG,
                     ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
                     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
-                    ConsumerConfig.GROUP_ID_CONFIG to "amazing-consumer-group",
-                    ConsumerConfig.CLIENT_ID_CONFIG to "amazing-consumer-client"
+                    ConsumerConfig.GROUP_ID_CONFIG to "0",
+//                    ConsumerConfig.CLIENT_ID_CONFIG to "amazing-consumer-client"
                 ),
                 listOf(TOPIC)
             )

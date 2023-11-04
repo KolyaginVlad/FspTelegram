@@ -1,7 +1,9 @@
 package bot.constants
 
+import bot.constants.ConstantsSting.DELIMITER
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.dataButton
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.inlineKeyboard
+import dev.inmo.tgbotapi.types.buttons.SimpleKeyboardButton
 import dev.inmo.tgbotapi.utils.matrix
 import dev.inmo.tgbotapi.utils.row
 
@@ -20,19 +22,31 @@ object ConstantsKeyboards {
 
     fun getDataBasesCommands(dataBase: String) = inlineKeyboard {
         row {
-            dataButton(ConstantsSting.checkPointBtn, ButtonType.DB_OPTIONS.toString() + "&" + dataBase +"&1")
+            dataButton(
+                ConstantsSting.checkPointBtn,
+                ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "1"
+            )
         }
         row {
-            dataButton(ConstantsSting.checkPointDatetBtn, ButtonType.DB_OPTIONS.toString() + "&" + dataBase +"&2")
+            dataButton(
+                ConstantsSting.checkPointDatetBtn,
+                ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "2"
+            )
         }
         row {
-            dataButton(ConstantsSting.onRealTime, ButtonType.DB_OPTIONS.toString() + "&" + dataBase +"&3")
+            dataButton(
+                ConstantsSting.onRealTime,
+                ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "3"
+            )
         }
         row {
-            dataButton(ConstantsSting.monitorCommon, ButtonType.DB_OPTIONS.toString() + "&" + dataBase +"&5")
+            dataButton(
+                ConstantsSting.monitorCommon,
+                ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "5"
+            )
         }
         row {
-            dataButton(ConstantsSting.backBtn, ButtonType.BACK.toString() + "&" + dataBase +"&4")
+            dataButton(ConstantsSting.backBtn, ButtonType.BACK.toString() + DELIMITER + dataBase + DELIMITER + "4")
         }
     }
 
@@ -46,7 +60,7 @@ object ConstantsKeyboards {
     fun getDataBasesKeyBoard(dataBases: List<String>) = inlineKeyboard {
         dataBases.forEach {
             row {
-                dataButton(it, ButtonType.SELECT_DATABASE.toString() + "&" + it)
+                dataButton(it, ButtonType.SELECT_DATABASE.toString() + DELIMITER + it)
             }
         }
         row { dataButton(ConstantsSting.addDatabase, ButtonType.ADD_DB.toString()) }
@@ -54,13 +68,23 @@ object ConstantsKeyboards {
 
     fun getLogInlineKeyboard(data: String) = inlineKeyboard {
         row {
-            dataButton(ConstantsSting.showSolution, ButtonType.COMMAND.toString() + "&" + data)
+            dataButton(ConstantsSting.showSolution, ButtonType.COMMAND.toString() + DELIMITER + data)
         }
     }
+
+    val simpleAnswerKeyboard = dev.inmo.tgbotapi.types.buttons.ReplyKeyboardMarkup(
+        matrix {
+            row {
+                +SimpleKeyboardButton("Да")
+                +SimpleKeyboardButton("Нет")
+            }
+        },
+        oneTimeKeyboard = true
+    )
 }
 
 enum class ButtonType {
-    SELECT_DATABASE, DB_OPTIONS, BACK, MAIN_OPTIONS, ADD_DB, COMMAND
+    SELECT_DATABASE, DB_OPTIONS, BACK, MAIN_OPTIONS, ADD_DB, COMMAND, CUSTOM_QUERY
 }
 
 fun String.toButtonType() = when (this) {

@@ -4,6 +4,7 @@ import Dependencies
 import bot.Command
 import bot.constants.ButtonType
 import bot.constants.ConstantsKeyboards
+import bot.constants.ConstantsSting
 import bot.constants.toButtonType
 import data.Api
 import dev.inmo.tgbotapi.extensions.api.answers.answer
@@ -20,10 +21,11 @@ class ProcessInlineButtons( private val api: Api) : Command {
     private val offCheckPointProcess: OffCheckPointRealtimeCommandsProcess by Dependencies.di.instance()
     private val scope: CoroutineScope by Dependencies.di.instance()
     private val addDataBaseCommandProcess: AddDataBaseCommandProcess by Dependencies.di.instance()
+    private val processCustomQuery: ProcessCustomQuery by Dependencies.di.instance()
 
     override suspend fun BehaviourContext.process() {
         onMessageDataCallbackQuery { message ->
-            val args = message.data.split("&")
+            val args = message.data.split(ConstantsSting.DELIMITER)
             println(args[0].toButtonType())
             when (args[0].toButtonType()) {
                 ButtonType.SELECT_DATABASE -> {
@@ -67,6 +69,9 @@ class ProcessInlineButtons( private val api: Api) : Command {
                 )
 
                 ButtonType.COMMAND -> TODO()
+                ButtonType.CUSTOM_QUERY -> {
+                    processCustomQuery.start(this, message)
+                }
             }
             answer(message)
         }

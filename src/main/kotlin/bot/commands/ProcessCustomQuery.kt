@@ -1,6 +1,8 @@
 package bot.commands
 
 import bot.CommandWithData
+import bot.constants.ConstantsKeyboards
+import bot.constants.ConstantsSting
 import dev.inmo.tgbotapi.extensions.api.send.sendMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
@@ -13,8 +15,8 @@ class ProcessCustomQuery : CommandWithData {
     override suspend fun BehaviourContext.process(data: MessageDataCallbackQuery) {
         val intPlaceholder = "&i"
         val stringPlaceholder = "&s"
-
-//        val query = data
+        val args = data.data.split(ConstantsSting.DELIMITER)
+//        val query = args[2]
         var query = "select * from table where id = &i"
         var placeholderIndex = query.indexOfFirst { it == '&' }
         while (placeholderIndex != -1) {
@@ -53,10 +55,11 @@ class ProcessCustomQuery : CommandWithData {
         val ans = waitText(
             SendTextMessage(
                 data.message.chat.id,
-                "Результат заполнения: $query. Всё верно? (Y/n)"
+                "Результат заполнения: $query. Всё верно?",
+                replyMarkup = ConstantsKeyboards.simpleAnswerKeyboard
             )
         ).first().text
-        if (ans.lowercase() == "y") {
+        if (ans.lowercase() == "Да") {
             //TODO api.sendCustomQuery(query)
         } else {
             process(data)

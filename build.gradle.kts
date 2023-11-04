@@ -25,6 +25,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.5")
     implementation("com.github.IlyaKalashnikov:ktor-kafka-client:aed79ce06c")
     implementation("org.apache.kafka:kafka-clients:3.4.0")
+    implementation("org.apache.kafka:connect-json:3.4.0")
     implementation("org.apache.kafka:kafka-streams:3.4.0")
     implementation("dev.inmo:tgbotapi:9.2.4")
 }
