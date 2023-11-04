@@ -9,6 +9,7 @@ import io.ktor.http.*
 class HttpRequester(private val client: HttpClient) : Api {
     override suspend fun sendConfig(
         userId: Long,
+        name: String,
         host: String,
         port: String,
         database: String,
@@ -17,9 +18,9 @@ class HttpRequester(private val client: HttpClient) : Api {
     ): Result<Unit> {
         println("sendConfig $userId $host $port $database $username $password")
         val response = runCatching {
-            client.post("http://188.225.46.50:81/api/Credentials") {
+            client.post("${BASE_URL}credentials") {
                 contentType(ContentType.Application.Json)
-                setBody(ConfigExportDto(host, port, database, username, password))
+                setBody(ConfigExportDto(userId, name, host, port, database, username, password))
             }
         }.onFailure {
             it.printStackTrace()
@@ -68,26 +69,20 @@ class HttpRequester(private val client: HttpClient) : Api {
 
     override suspend fun getDataBaseList(userId: Long): Result<List<DataBaseResponseDto>> {
         val response = runCatching {
-            client.get(getDataBaseListRoot.plus("/$userId")) { //TODO
+            client.get(BASE_URL.plus("credentials/$userId")) {
                 contentType(ContentType.Application.Json)
             }
         }.onFailure {
             it.printStackTrace()
         }.getOrNull()
-        println("sendConfig ${response?.status?.value}")
+        println("getDataBaseList ${response?.status?.value} ${response?.body<String>()}")
+        val body = response?.body<GetListDatabaseDto>()
         return if (response?.status?.value in 200..299 && response != null) {
-            Result.success(response.body())
+            Result.success(body?.credentialsList.orEmpty())
         } else {
-            //Result.failure(Exception())
-            Result.success(
-                listOf(
-                    DataBaseResponseDto("db"),
-                    DataBaseResponseDto("db2"),
-                    DataBaseResponseDto("db3")
-                )
-            )
+            Result.failure(Exception())
         }
     }
 }
 
-const val getDataBaseListRoot = "TODO()"
+const val BASE_URL = "http://188.225.46.50:81/api/"

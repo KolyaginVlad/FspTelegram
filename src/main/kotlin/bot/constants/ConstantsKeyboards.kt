@@ -2,7 +2,6 @@ package bot.constants
 
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.dataButton
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.inlineKeyboard
-import dev.inmo.tgbotapi.types.buttons.SimpleKeyboardButton
 import dev.inmo.tgbotapi.utils.matrix
 import dev.inmo.tgbotapi.utils.row
 
@@ -16,9 +15,7 @@ object ConstantsKeyboards {
     )
 
     val onlyAddDatabase = inlineKeyboard {
-        row {
-            dataButton(ConstantsSting.checkPointDatetBtn, ConstantsSting.checkPointDatetBtn)
-        }
+        row { dataButton(ConstantsSting.addDatabase, ButtonType.ADD_DB.toString()) }
     }
 
     val dataBaseCommands = inlineKeyboard {

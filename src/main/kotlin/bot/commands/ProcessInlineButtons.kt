@@ -1,5 +1,6 @@
 package bot.commands
 
+import Dependencies
 import bot.Command
 import bot.RuntimeStorage
 import bot.User
@@ -11,7 +12,6 @@ import dev.inmo.tgbotapi.extensions.api.answers.answer
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onMessageDataCallbackQuery
-import dev.inmo.tgbotapi.extensions.utils.types.buttons.dataButton
 import dev.inmo.tgbotapi.types.IdChatIdentifier
 import kotlinx.coroutines.CoroutineScope
 import org.kodein.di.instance
@@ -22,7 +22,7 @@ class ProcessInlineButtons : Command {
     private val offCheckPointProcess: OffCheckPointRealtimeCommandsProcess by Dependencies.di.instance()
     private val scope: CoroutineScope by Dependencies.di.instance()
     private val addDataBaseCommandProcess: AddDataBaseCommandProcess by Dependencies.di.instance()
-    private val processInlineButtons: ProcessInlineButtons by Dependencies.di.instance()
+
     override suspend fun BehaviourContext.process() {
         onMessageDataCallbackQuery { message ->
             val args = message.data.split(" ")

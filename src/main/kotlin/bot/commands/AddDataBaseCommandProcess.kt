@@ -18,12 +18,16 @@ class AddDataBaseCommandProcess(
         onText({info->
             info.content.text == ConstantsSting.addDatabase
         }) { info ->
-
+            val name = waitText(
+                SendTextMessage(
+                    info.chat.id,
+                    "Введите имя базы данных"
+                )
+            ).first().text
             val host = waitText(
                 SendTextMessage(
                     info.chat.id,
-                    "Введите host",
-                    replyMarkup = ConstantsKeyboards.getLogInlineKeyboard("some")
+                    "Введите host"
                 )
             ).first().text
             val port = waitText(
@@ -35,7 +39,7 @@ class AddDataBaseCommandProcess(
             val database = waitText(
                 SendTextMessage(
                     info.chat.id,
-                    "Введите имя базы данных",
+                    "Введите database",
                 )
             ).first().text
             val username = waitText(
@@ -51,12 +55,14 @@ class AddDataBaseCommandProcess(
                 )
             ).first().text
             sendTextMessage(info.chat, "Подождите, пробуем получить доступ...")
-            api.sendConfig(info.chat.id.chatId, host, port, database, username, password).fold(
+            api.sendConfig(info.chat.id.chatId, name, host, port, database, username, password).fold(
                 onSuccess = {
                     sendTextMessage(
                         info.chat,
                         "Доступ успешно получен",
-                        replyMarkup = ConstantsKeyboards.dataBaseCommands
+                        replyMarkup = ConstantsKeyboards.getDataBasesKeyBoard(
+                            api.getDataBaseList(info.chat.id.chatId).fold(onSuccess = { it.map { it.name } }, onFailure = { listOf() })
+                        )
                     )
                 },
                 onFailure = {

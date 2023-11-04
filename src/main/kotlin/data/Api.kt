@@ -7,6 +7,7 @@ interface Api {
 
     suspend fun sendConfig(
         userId: Long,
+        name: String,
         host: String,
         port: String,
         database: String,
