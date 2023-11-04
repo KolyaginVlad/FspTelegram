@@ -23,7 +23,15 @@ class HttpRequester(private val client: HttpClient) : Api {
         val response = runCatching {
             client.post("${BASE_URL}credentials") {
                 contentType(ContentType.Application.Json)
-                setBody(ConfigExportDto(userId, name, host, port, database, username, password))
+                setBody(ConfigExportDto(
+                    userId = userId,
+                    host = host,
+                    name = name,
+                    port = port,
+                    database = database,
+                    username = username,
+                    password = password
+                ))
             }
         }.onFailure {
             it.printStackTrace()

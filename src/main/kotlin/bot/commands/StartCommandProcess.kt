@@ -10,30 +10,13 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
-import org.apache.kafka.clients.consumer.KafkaConsumer
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.toJavaDuration
 
 class StartCommandProcess(
-    private val api: Api,
-    private val consumer: KafkaConsumer<String, String>
+    private val api: Api
 ) : Command {
-
-    tailrec fun <T> repeatUntilSome(block: () -> T?): T = block() ?: repeatUntilSome(block)
 
     override suspend fun BehaviourContext.process() {
         onCommand("start") { info ->
-            launch {
-                while (true) {
-                    val message = repeatUntilSome {
-                        consumer.poll(400.milliseconds.toJavaDuration()).map { it.value().toString() }
-                            .firstOrNull()
-                    }
-                    println(message + "${info.chat}")
-                    sendTextMessage(info.chat, message)
-                }
-            }
             api.getDataBaseList(info.chat.id.chatId).fold(
                 onSuccess = { databases ->
                     if (databases.isNotEmpty()) {
@@ -80,7 +63,15 @@ class StartCommandProcess(
                             )
                         ).first().text
                         sendTextMessage(info.chat, "Подождите, пробуем получить доступ...")
-                        api.sendConfig(info.chat.id.chatId, name, host, port, database, username, password).fold(
+                        api.sendConfig(
+                            userId = info.chat.id.chatId,
+                            name = name,
+                            host = host,
+                            port = port,
+                            database = database,
+                            username = username,
+                            password = password
+                        ).fold(
                             onSuccess = {
                                 RuntimeStorage.userRealtimeMap[info.chat.id.chatId] = false
                                 sendTextMessage(
