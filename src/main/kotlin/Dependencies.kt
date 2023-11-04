@@ -26,6 +26,8 @@ object Dependencies {
 
         bindSingleton { CheckPointDateCommandProcess(instance()) }
 
+        bindSingleton { KillTransactionCommandProcess(instance()) }
+
         bindSingleton { StartCommandProcess(instance()) }
 
         bindSingleton { CheckPointCommandProcess(instance()) }

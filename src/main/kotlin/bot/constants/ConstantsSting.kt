@@ -13,5 +13,7 @@ object ConstantsSting {
     const val backBtn = "Назад"
     const val monitorCommon = "Мониторинг всех баз"
     const val metrix = "Получить метрики"
+    const val restartDb = "Перезапустить базу данных"
     const val DELIMITER = "@@@"
+    const val vacuumClean = "Оптимизировать базу данных"
 }
