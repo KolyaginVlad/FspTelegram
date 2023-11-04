@@ -45,6 +45,12 @@ object Dependencies {
 
         bindSingleton { ProcessCustomQuery() }
 
+        bindSingleton { AddDatabaseSshCommandProcess(instance()) }
+
+        bindSingleton { AddDatabaseConnectingStringCommandProcess(instance()) }
+
+        bindSingleton { AddDatabaseFileCommandProcess() }
+
         bindSingleton {
             consumer<String, String>(
                 mapOf(

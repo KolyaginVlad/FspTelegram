@@ -36,6 +36,10 @@ interface Api {
 
     suspend fun visual(link: String): Result<String>
 
+    suspend fun connectBySsh(userId: Long, ssh: String): Result<Unit>
+
+    suspend fun connectByConnectionString(userId: Long, connectionString: String): Result<Unit>
+
 }
 
 suspend fun Result<Unit>.foldMsg(context: BehaviourContext, data: MessageDataCallbackQuery, api: Api, dataBase: String) = this.fold(

@@ -4,7 +4,7 @@ import Dependencies
 import bot.Command
 import bot.constants.ButtonType
 import bot.constants.ConstantsKeyboards
-import bot.constants.ConstantsSting
+import bot.constants.ConstantsString
 import bot.constants.toButtonType
 import data.Api
 import dev.inmo.tgbotapi.extensions.api.answers.answer
@@ -23,13 +23,16 @@ class ProcessInlineButtons(private val api: Api) : Command {
     private val checkPointDateProcess: CheckPointDateCommandProcess by Dependencies.di.instance()
     private val scope: CoroutineScope by Dependencies.di.instance()
     private val addDataBaseCommandProcess: AddDataBaseCommandProcess by Dependencies.di.instance()
+    private val addDatabaseSshCommandProcess: AddDatabaseSshCommandProcess by Dependencies.di.instance()
+    private val addDatabaseConnectingStringCommandProcess: AddDatabaseConnectingStringCommandProcess by Dependencies.di.instance()
+    private val addDatabaseFileCommandProcess: AddDatabaseFileCommandProcess by Dependencies.di.instance()
     private val processCustomQuery: ProcessCustomQuery by Dependencies.di.instance()
     private val metrixCommand: MetrixCommand by Dependencies.di.instance()
     private val vacuumCommandProcess: VacuumCommandProcess by Dependencies.di.instance()
 
     override suspend fun BehaviourContext.process() {
         onMessageDataCallbackQuery { message ->
-            val args = message.data.split(ConstantsSting.DELIMITER)
+            val args = message.data.split(ConstantsString.DELIMITER)
             println(args[0].toButtonType())
             when (args[0].toButtonType()) {
                 ButtonType.SELECT_DATABASE -> {
@@ -59,9 +62,10 @@ class ProcessInlineButtons(private val api: Api) : Command {
 
                 ButtonType.BACK -> BACK(args.last(), this, message)
                 ButtonType.MAIN_OPTIONS -> TODO()
-                ButtonType.ADD_DB -> addDataBaseCommandProcess.start(
-                    this,
-                    message,
+                ButtonType.ADD_DB -> sendTextMessage(
+                    message.message.chat,
+                    ConstantsString.selectConnectMethod,
+                    replyMarkup = ConstantsKeyboards.selectAddDatabaseMethodKeyboard
                 )
 
                 ButtonType.COMMAND -> TODO()
@@ -70,12 +74,31 @@ class ProcessInlineButtons(private val api: Api) : Command {
                 }
 
                 ButtonType.LOG_SETTINGS -> TODO()
+                ButtonType.SELECT_DATABASE_ADD -> selectDatabaseAdd(args[1], this, message)
             }
             answer(message)
         }
     }
 
-    private suspend fun DB_OPTIONS(method: String, database: String, message: MessageDataCallbackQuery, context: BehaviourContext) {
+    private suspend fun selectDatabaseAdd(
+        method: String,
+        behaviourContext: BehaviourContext,
+        message: MessageDataCallbackQuery
+    ) {
+        when (method) {
+            "1" -> addDataBaseCommandProcess.start(behaviourContext, message)
+            "2" -> addDatabaseSshCommandProcess.start(behaviourContext, message)
+            "3" -> addDatabaseConnectingStringCommandProcess.start(behaviourContext, message)
+            "4" -> addDatabaseFileCommandProcess.start(behaviourContext, message)
+        }
+    }
+
+    private suspend fun DB_OPTIONS(
+        method: String,
+        database: String,
+        message: MessageDataCallbackQuery,
+        context: BehaviourContext
+    ) {
         when (method) {
             "1" -> checkPointProcess.start(context, message, database)
             "2" -> checkPointDateProcess.start(context, message, database)

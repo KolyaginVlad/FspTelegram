@@ -3,7 +3,7 @@ package bot.commands
 import bot.Command
 import bot.RuntimeStorage
 import bot.constants.ConstantsKeyboards
-import bot.constants.ConstantsSting
+import bot.constants.ConstantsString
 import data.Api
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
@@ -18,13 +18,13 @@ class OnCheckPointRealtimeCommandProcess(
 ): Command {
     override suspend fun BehaviourContext.process() {
         onText({
-            it.content.text == ConstantsSting.onRealTime
+            it.content.text == ConstantsString.onRealTime
         }) {
             RuntimeStorage.userRealtimeMap[it.chat.id.chatId] = true
             val database = waitText(
                 SendTextMessage(
                     it.chat.id,
-                    ConstantsSting.enterDb,
+                    ConstantsString.enterDb,
                     replyMarkup = ConstantsKeyboards.checkAndAddWithOffRealtime
                 ),
             ).first().text
