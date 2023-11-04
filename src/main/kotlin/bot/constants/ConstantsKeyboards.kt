@@ -46,10 +46,19 @@ object ConstantsKeyboards {
             )
         }
         row {
-            dataButton(ConstantsSting.backBtn, ButtonType.BACK.toString() + DELIMITER + dataBase + DELIMITER + "4")
+            dataButton(ConstantsSting.metrix, ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "6")
+        }
+        row {
+            dataButton(
+                ConstantsSting.backBtn,
+                ButtonType.BACK.toString() + DELIMITER + dataBase + DELIMITER + "4" + ButtonType.DB_OPTIONS.toString()
+            )
         }
     }
 
+    val repair = inlineKeyboard {
+        row { dataButton(ConstantsSting.addDatabase, ConstantsSting.addDatabase) }
+    }
     val checkAndAddWithOffRealtime = inlineKeyboard {
         row { dataButton(ConstantsSting.addDatabase, ConstantsSting.addDatabase) }
         row { dataButton(ConstantsSting.checkPointBtn, ConstantsSting.checkPointBtn) }
@@ -81,6 +90,14 @@ object ConstantsKeyboards {
         },
         oneTimeKeyboard = true
     )
+
+    fun repairKeyboard(variants: List<String>) = inlineKeyboard {
+        variants.forEach {
+            row {
+
+            }
+        }
+    }
 }
 
 enum class ButtonType {

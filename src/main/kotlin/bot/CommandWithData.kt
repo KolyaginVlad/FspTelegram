@@ -12,3 +12,12 @@ interface CommandWithData {
 
     suspend fun BehaviourContext.process(data: MessageDataCallbackQuery)
 }
+
+interface CommandWithDataDataBase {
+    suspend fun start(context: BehaviourContext,data: MessageDataCallbackQuery, database: String) {
+        with(context) {
+            process(data, database)
+        }
+    }
+    suspend fun BehaviourContext.process(data: MessageDataCallbackQuery,database: String)
+}

@@ -1,4 +1,3 @@
-
 import bot.commands.*
 import data.Api
 import data.HttpRequester
@@ -25,6 +24,8 @@ object Dependencies {
 
         bindSingleton { CoroutineScope(Dispatchers.IO + SupervisorJob()) }
 
+        bindSingleton { CheckPointDateCommandProcess(instance()) }
+
         bindSingleton { StartCommandProcess(instance()) }
 
         bindSingleton { CheckPointCommandProcess(instance()) }
@@ -36,6 +37,7 @@ object Dependencies {
         bindSingleton { OffCheckPointRealtimeCommandsProcess() }
 
         bindSingleton { ProcessInlineButtons(instance()) }
+        bindSingleton { MetrixCommand(instance()) }
 
         bindSingleton { ProcessCustomQuery() }
 

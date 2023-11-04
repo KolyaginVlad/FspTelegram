@@ -12,5 +12,6 @@ object ConstantsSting {
     const val checkPointDatetBtn = "Проверить базу данных в определённое время"
     const val backBtn = "Назад"
     const val monitorCommon = "Мониторинг всех баз"
+    const val metrix = "Получить метрики"
     const val DELIMITER = "@@@"
 }

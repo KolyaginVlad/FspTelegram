@@ -24,7 +24,7 @@ class BotManager {
             bot.buildBehaviourWithLongPolling {
                 println(getMe())
                 startCommandProcess.start(this)
-                checkPointProcess.start(this)
+                //checkPointProcess.start(this)
                 onCheckPointProcess.start(this)
                 offCheckPointProcess.start(this)
                 addDataBaseCommandProcess.start(this)

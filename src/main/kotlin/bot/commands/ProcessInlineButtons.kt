@@ -11,32 +11,26 @@ import dev.inmo.tgbotapi.extensions.api.answers.answer
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onMessageDataCallbackQuery
-import dev.inmo.tgbotapi.types.IdChatIdentifier
+import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
 import kotlinx.coroutines.CoroutineScope
 import org.kodein.di.instance
 
-class ProcessInlineButtons( private val api: Api) : Command {
+class ProcessInlineButtons(private val api: Api) : Command {
     private val checkPointProcess: CheckPointCommandProcess by Dependencies.di.instance()
     private val onCheckPointProcess: OnCheckPointRealtimeCommandProcess by Dependencies.di.instance()
     private val offCheckPointProcess: OffCheckPointRealtimeCommandsProcess by Dependencies.di.instance()
+    private val checkPointDateProcess: CheckPointDateCommandProcess by Dependencies.di.instance()
     private val scope: CoroutineScope by Dependencies.di.instance()
     private val addDataBaseCommandProcess: AddDataBaseCommandProcess by Dependencies.di.instance()
     private val processCustomQuery: ProcessCustomQuery by Dependencies.di.instance()
-
+    private val metrixCommand: MetrixCommand by Dependencies.di.instance()
     override suspend fun BehaviourContext.process() {
         onMessageDataCallbackQuery { message ->
             val args = message.data.split(ConstantsSting.DELIMITER)
             println(args[0].toButtonType())
             when (args[0].toButtonType()) {
                 ButtonType.SELECT_DATABASE -> {
-//                    message.message.chat.id.takeIf { id ->
-//                        RuntimeStorage.userData.none { it.id == id.chatId }
-//                    }?.let { id -> RuntimeStorage.userData.add(User(id.chatId, args[1])) }
-
-                    //RuntimeStorage.userData.first { it.id == message.message.chat.id.chatId }.currentDb = args[1]
-                    // todo добавить
-//                    println(RuntimeStorage.userData)
-                    sendTextMessage( // Todo Не открывается
+                    sendTextMessage(
                         message.message.chat.id,
                         "Выберите действие",
                         replyMarkup = ConstantsKeyboards.getDataBasesCommands(args[1])
@@ -48,19 +42,13 @@ class ProcessInlineButtons( private val api: Api) : Command {
                     DB_OPTIONS(
                         args[2],
                         args[1],
-                        message.message.chat.id,
+                        message,
                         this
                     )
                 }
 
 
-                ButtonType.BACK -> sendTextMessage(
-                    message.message.chat.id,
-                    "Выберите действие",
-                    replyMarkup = ConstantsKeyboards.getDataBasesKeyBoard(
-                        api.getDataBaseList( message.message.chat.id.chatId).fold(onSuccess = { it.map { it.name } }, onFailure = { listOf() })
-                    )
-                )
+                ButtonType.BACK -> BACK(args[2], this, message)
 
                 ButtonType.MAIN_OPTIONS -> TODO()
                 ButtonType.ADD_DB -> addDataBaseCommandProcess.addDataBase(
@@ -77,16 +65,34 @@ class ProcessInlineButtons( private val api: Api) : Command {
         }
     }
 
-    fun DB_OPTIONS(method: String, dataBase: String, chatId: IdChatIdentifier, context: BehaviourContext) = when (method) {
-        "1" -> checkPointProcess.checkPoint(chatId, dataBase, context)
-        "2" -> checkPointProcess.checkPointDate(chatId, dataBase, context)
-        "3" -> TODO()
-        "4" -> TODO()
-        "5" -> TODO()
+    private suspend fun DB_OPTIONS(method: String, dataBase: String, message: MessageDataCallbackQuery, context: BehaviourContext) =
+        when (method) {
+            "1" -> checkPointProcess.start(context, message, dataBase)
+            "2" -> checkPointDateProcess.start(context, message, dataBase)
+            "3" -> TODO()
+            "4" -> TODO()
+            "5" -> TODO()
+            "6" -> metrixCommand.start(context, message, dataBase)
+            else -> {}
+        }
+
+
+    fun MAIN_OPTIONS(method: String) = when (method) {
         else -> {}
     }
 
-    fun MAIN_OPTIONS(method: String) = when (method) {
+    suspend fun BACK(now: String, context: BehaviourContext, message: MessageDataCallbackQuery) = when (now) {
+        "DB_OPTIONS" -> {
+            context.sendTextMessage(
+                message.message.chat.id,
+                "Выберите действие",
+                replyMarkup = ConstantsKeyboards.getDataBasesKeyBoard(
+                    api.getDataBaseList(message.message.chat.id.chatId)
+                        .fold(onSuccess = { it.map { it.name } }, onFailure = { listOf() })
+                )
+            )
+        }
+
         else -> {}
     }
 }

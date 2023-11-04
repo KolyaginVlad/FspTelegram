@@ -1,9 +1,6 @@
 package data
 
-import data.models.CheckPointOnDateDto
-import data.models.ConfigExportDto
-import data.models.DataBaseResponseDto
-import data.models.GetListDatabaseDto
+import data.models.*
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -46,7 +43,9 @@ class HttpRequester(private val client: HttpClient) : Api {
 
     override suspend fun checkPoint(userId: Long, dataBase: String): Result<Unit> {
         val response = runCatching {
-            client.get("${BASE_URL}Activity/get-error-status/$userId/$dataBase")
+            client.get("${BASE_URL}Activity/get-error-stats/$userId/$dataBase"){
+                contentType(ContentType.Application.Json)
+            }
         }.onFailure {
             it.printStackTrace()
         }.getOrNull()
@@ -60,7 +59,7 @@ class HttpRequester(private val client: HttpClient) : Api {
 
     override suspend fun checkPointOnDate(userId: Long, dataBase: String, date: String): Result<Unit> {
         val response = runCatching {
-            client.post("TODO()") { //TODO
+            client.post("TODO()") {
                 contentType(ContentType.Application.Json)
                 setBody(CheckPointOnDateDto(userId, dataBase, date))
             }
@@ -87,6 +86,54 @@ class HttpRequester(private val client: HttpClient) : Api {
         val body = response?.body<GetListDatabaseDto>()
         return if (response?.status?.value in 200..299 && response != null) {
             Result.success(body?.credentialsList.orEmpty())
+        } else {
+            Result.failure(Exception())
+        }
+    }
+
+    override suspend fun killTransaction(userId: Long): Result<Unit> {
+        val response = runCatching {
+            client.get("${BASE_URL}Activity/kill-transaction/$userId") {
+                contentType(ContentType.Application.Json)
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrNull()
+        println("killTransaction ${response?.status?.value}")
+        return if (response?.status?.value in 200..299) {
+            Result.success(Unit)
+        } else {
+            Result.failure(Exception())
+        }
+    }
+
+    override suspend fun getMetrix(dataBase: String): Result<MetrixDto> {
+        val response = runCatching {
+            client.get("${BASE_URL}credentials/stat-database/$dataBase") {
+                contentType(ContentType.Application.Json)
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrNull()
+        println("getMetrix ${response?.status?.value}")
+        return if (response?.status?.value in 200..299 && response != null) {
+            Result.success(response.body<MetrixDto>())
+        } else {
+            Result.failure(Exception())
+        }
+    }
+
+    override suspend fun vacuum(userId: Long, dataBase: String): Result<Unit> {
+        val response = runCatching {
+            client.get("${BASE_URL}Vacuum/full/$userId/$dataBase") {
+                contentType(ContentType.Application.Json)
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrNull()
+        println("vacuum ${response?.status?.value}")
+        return if (response?.status?.value in 200..299 && response != null) {
+            Result.success(response.body())
         } else {
             Result.failure(Exception())
         }
