@@ -432,7 +432,7 @@ class HttpRequester(private val client: HttpClient) : Api {
     override suspend fun executeSshQuery(chatId: Long, database: String, name: String): Result<Unit> {
         println("executeSshQuery $name $chatId $database")
         val response = runCatching {
-            client.post("${BASE_URL}Ssh/execute") {
+            client.post("${BASE_URL}Ssh/execute-template") {
                 contentType(ContentType.Application.Json)
                 setBody(ExecuteSshQueryExportDto(name, chatId, database))
             }
