@@ -9,5 +9,5 @@ data class ConnectionDto(
     val port: String,
     val username: String,
     val password: String,
-    val credentialId: Long
+    val databaseName: String
 )

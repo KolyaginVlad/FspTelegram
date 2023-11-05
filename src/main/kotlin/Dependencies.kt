@@ -73,6 +73,16 @@ object Dependencies {
 
         bindSingleton { AddQueryCommandProcess(instance()) }
 
+        bindSingleton { AddSshConnection(instance()) }
+
+        bindSingleton { AddSshQueryCommandProcess(instance()) }
+
+        bindSingleton { RemoveSshQueryCommandProcess(instance()) }
+
+        bindSingleton { UpdateSshQueryCommandProcess(instance()) }
+
+        bindSingleton { ExecuteSshQueryCommandProcess(instance()) }
+
         bindSingleton {
             consumer<String, String>(
                 mapOf(

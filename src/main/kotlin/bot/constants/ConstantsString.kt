@@ -38,8 +38,11 @@ object ConstantsString {
     const val checkDisk = "check-disk-space"
     const val lsof = "lsof"
     const val tcpdump = "tcpdump"
-    const val customSsh = "customSsh"
+    const val customSsh = "Мои скрипты"
     const val addSsh = "Добавить ssh скрипт"
+    const val removeSsh = "Удалить ssh скрипт"
+    const val updateSsh = "Обновить ssh скрипт"
+    const val executeSsh = "Выполнить ssh скрипт"
     const val ssh = "Ssh скрипты"
     const val addSshConnection = "Добавить новое подключение"
 }

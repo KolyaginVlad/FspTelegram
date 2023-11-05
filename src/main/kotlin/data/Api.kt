@@ -54,9 +54,11 @@ interface Api {
 
     suspend fun createUrl(name: String, url: String, chatId: Long, database: String): Result<Unit>
 
-    suspend fun getQueries(userId: Long, database: String): Result<List<String>>
+    suspend fun getSshQueries(userId: Long, database: String): Result<List<String>>
 
     suspend fun createQuery(name: String, query: String, chatId: Long, database: String): Result<Unit>
+
+    suspend fun createSshQuery(name: String, query: String, chatId: Long, database: String): Result<Unit>
 
     suspend fun getQueryByName(name: String, chatId: Long, database: String): Result<String>
 
@@ -66,8 +68,11 @@ interface Api {
     suspend fun sshLsof(userId: Long): Result<Unit>
 
     suspend fun sshTcpdump(userId: Long): Result<Unit>
-    suspend fun addSshConnection(userId: Long,ip: String, port: String, username: String, password: String, credentialId: Long): Result<Unit> //TODO передавать id
-    suspend fun getSshConnections(userId: Long): Result<List<String>>
+    suspend fun addSshConnection(userId: Long,ip: String, port: String, username: String, password: String, database: String): Result<Unit>
+    suspend fun hasSshConnections(userId: Long, database: String): Result<Boolean>
+    suspend fun removeSshQuery(chatId: Long, database: String, name: String): Result<Unit>
+    suspend fun updateSshQuery(chatId: Long, database: String, name: String, newValue: String): Result<Unit>
+    suspend fun executeSshQuery(chatId: Long, database: String, name: String): Result<Unit>
 }
 
 

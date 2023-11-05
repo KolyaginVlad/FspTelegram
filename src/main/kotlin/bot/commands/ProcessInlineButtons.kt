@@ -8,12 +8,16 @@ import bot.constants.ConstantsKeyboards
 import bot.constants.ConstantsString
 import bot.constants.toButtonType
 import data.Api
+import data.foldMsg
 import dev.inmo.tgbotapi.extensions.api.answers.answer
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
+import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onMessageDataCallbackQuery
+import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.queries.callback.MessageDataCallbackQuery
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.first
 import org.kodein.di.instance
 
 class ProcessInlineButtons(private val api: Api) : Command {
@@ -40,6 +44,11 @@ class ProcessInlineButtons(private val api: Api) : Command {
     private val sshCheckDiskCommandProcess: SshCheckDiskCommandProcess by Dependencies.di.instance()
     private val sshLsofCommandProcess: SshLsofCommandProcess by Dependencies.di.instance()
     private val sshTcpDumpCommandProcess: SshTcpDumpCommandProcess by Dependencies.di.instance()
+    private val addSshConnection: AddSshConnection by Dependencies.di.instance()
+    private val addSshQueryCommandProcess: AddSshQueryCommandProcess by Dependencies.di.instance()
+    private val removeSshQueryCommandProcess: RemoveSshQueryCommandProcess by Dependencies.di.instance()
+    private val updateSshQueryCommandProcess: UpdateSshQueryCommandProcess by Dependencies.di.instance()
+    private val executeSshQueryCommandProcess: ExecuteSshQueryCommandProcess by Dependencies.di.instance()
 
     override suspend fun BehaviourContext.process() {
         onMessageDataCallbackQuery { message ->
@@ -58,25 +67,16 @@ class ProcessInlineButtons(private val api: Api) : Command {
                         )
                     }
 
-                    ButtonType.SSH_CONNECTIONS -> {
-                        when (args[1]) {
-                            "0"->{}
-                            else -> {
-                                sendTextMessage(
-                                    message.message.chat.id,
-                                    "Выберите действие",
-                                    replyMarkup = ConstantsKeyboards.getSsh(args[1])
-                                )
-                            }
-                        }
-                    }
-
                     ButtonType.SSH -> {
-                        when (args.last()) {
-                            "1" -> sshCheckDiskCommandProcess.start(this, message,args.last())
-                            "2" -> sshLsofCommandProcess.start(this, message,args.last())
-                            "3" -> sshTcpDumpCommandProcess.start(this, message,args.last())
-                            "0" -> TODO() //добавить SSh
+                        when (args[1]) {
+                            "1" -> sshCheckDiskCommandProcess.start(this, message, args.last())
+                            "2" -> sshLsofCommandProcess.start(this, message, args.last())
+                            "3" -> sshTcpDumpCommandProcess.start(this, message, args.last())
+                            "4" -> sendTextMessage(
+                                message.message.chat.id,
+                                "Что вы хотите?",
+                                replyMarkup = ConstantsKeyboards.getSshCrud(args[2])
+                            )
                         }
                     }
 
@@ -172,8 +172,53 @@ class ProcessInlineButtons(private val api: Api) : Command {
                             processQueryCommandProcess.start(this, message, args[1])
                         }
                     }
+
+                    ButtonType.SSH_CRUD -> sshCrud(this, message, args[1], args[2])
+                    ButtonType.SSH_DELETE ->
+                        api.removeSshQuery(message.message.chat.id.chatId, args[1], args[2])
+                            .foldMsg(this, message, api, args[1])
+
+                    ButtonType.SSH_UPDATE -> {
+                        val newValue = waitText(
+                            SendTextMessage(
+                                message.message.chat.id,
+                                "Введите новое значение"
+                            )
+                        ).first().text
+                        api.updateSshQuery(message.message.chat.id.chatId, args[1], args[2], newValue)
+                            .foldMsg(this, message, api, args[1])
+                    }
+
+                    ButtonType.SSH_EXECUTE ->
+                        api.executeSshQuery(message.message.chat.id.chatId, args[1], args[2])
+                            .foldMsg(this, message, api, args[1])
                 }
                 answer(message)
+            }
+        }
+    }
+
+    private suspend fun sshCrud(
+        context: BehaviourContext,
+        message: MessageDataCallbackQuery,
+        method: String,
+        database: String
+    ) {
+        when (method) {
+            "1" -> {
+                addSshQueryCommandProcess.start(context, message, database)
+            }
+
+            "2" -> {
+                removeSshQueryCommandProcess.start(context, message, database)
+            }
+
+            "3" -> {
+                updateSshQueryCommandProcess.start(context, message, database)
+            }
+
+            "4" -> {
+                executeSshQueryCommandProcess.start(context, message, database)
             }
         }
     }
@@ -214,13 +259,21 @@ class ProcessInlineButtons(private val api: Api) : Command {
             }
 
             "11" -> {
-                api.getSshConnections(message.message.chat.id.chatId).fold(
+                api.hasSshConnections(message.message.chat.id.chatId, database).fold(
                     onSuccess = {
-                        context.sendTextMessage(
-                            message.message.chat.id,
-                            "Выберите соединение",
-                            replyMarkup = ConstantsKeyboards.sshConnections(it)
-                        )
+                        if (it) {
+                            context.sendTextMessage(
+                                message.message.chat.id,
+                                "Выберите действие",
+                                replyMarkup = ConstantsKeyboards.getSsh(database)
+                            )
+                        } else {
+                            context.sendTextMessage(
+                                message.message.chat.id,
+                                "Добавьте соединение"
+                            )
+                            addSshConnection.start(context, message, database)
+                        }
                     },
                     onFailure = {
                         context.sendTextMessage(
@@ -259,6 +312,22 @@ class ProcessInlineButtons(private val api: Api) : Command {
                     message.message.chat.id,
                     "Выберите действие",
                     replyMarkup = ConstantsKeyboards.getDataBasesCommands(database)
+                )
+            }
+
+            "SSH_CRUD" -> {
+                context.sendTextMessage(
+                    message.message.chat.id,
+                    "Выберите действие",
+                    replyMarkup = ConstantsKeyboards.getSshCrud(database)
+                )
+            }
+
+            "SSH" -> {
+                context.sendTextMessage(
+                    message.message.chat.id,
+                    "Выберите действие",
+                    replyMarkup = ConstantsKeyboards.getSsh(database)
                 )
             }
 

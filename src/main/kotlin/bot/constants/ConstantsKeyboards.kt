@@ -17,21 +17,6 @@ object ConstantsKeyboards {
         }
     )
 
-    fun sshConnections(connections: List<String>) = inlineKeyboard {
-        connections.forEach {
-            row {
-                dataButton(it, "${ButtonType.SSH_CONNECTIONS}${DELIMITER}1${DELIMITER}${it}")
-            }
-        }
-        row {
-            dataButton(ConstantsString.addSshConnection, "${ButtonType.SSH_CONNECTIONS}${DELIMITER}0${DELIMITER}$")
-        }
-        row {
-            dataButton(ConstantsString.backBtn, "${ButtonType.BACK}${DELIMITER}-1$${DELIMITER}${ButtonType.MEMORY}")
-        }
-
-    }
-
     fun getMemory(database: String) = inlineKeyboard {
         row {
             dataButton(ConstantsString.changeMemory, "${ButtonType.MEMORY}${DELIMITER}1${DELIMITER}${database}")
@@ -86,27 +71,42 @@ object ConstantsKeyboards {
         }
     }
 
-    fun getSsh(connection: String) = inlineKeyboard {
+    fun getSsh(database: String) = inlineKeyboard {
         row {
-            dataButton(ConstantsString.checkDisk, "${ButtonType.SSH}${DELIMITER}1${DELIMITER}$connection")
+            dataButton(ConstantsString.checkDisk, "${ButtonType.SSH}${DELIMITER}1${DELIMITER}$database")
         }
         row {
-            dataButton(ConstantsString.lsof, "${ButtonType.SSH}${DELIMITER}2${DELIMITER}$connection")
+            dataButton(ConstantsString.lsof, "${ButtonType.SSH}${DELIMITER}2${DELIMITER}$database")
         }
         row {
-            dataButton(ConstantsString.tcpdump, "${ButtonType.SSH}${DELIMITER}3${DELIMITER}$connection")
+            dataButton(ConstantsString.tcpdump, "${ButtonType.SSH}${DELIMITER}3${DELIMITER}$database")
         }
         row {
             dataButton(
                 ConstantsString.customSsh,
-                "${ButtonType.SSH}${DELIMITER}4${DELIMITER}$connection"
-            ) //TODO тут типа перходим на кнопки создания/удаления/запуска ssh
+                "${ButtonType.SSH}${DELIMITER}4${DELIMITER}$database"
+            )
         }
         row {
-            dataButton(ConstantsString.addSsh, "${ButtonType.SSH}${DELIMITER}5${DELIMITER}$connection")
+            dataButton(ConstantsString.backBtn, "${ButtonType.BACK}${DELIMITER}-1${DELIMITER}${ButtonType.DB_OPTIONS}")
+        }
+    }
+
+    fun getSshCrud(database: String) = inlineKeyboard {
+        row {
+            dataButton(ConstantsString.addSsh, "${ButtonType.SSH_CRUD}${DELIMITER}1${DELIMITER}$database")
         }
         row {
-            dataButton(ConstantsString.backBtn, "${ButtonType.BACK}${DELIMITER}-1${DELIMITER}${ButtonType.SSH}")
+            dataButton(ConstantsString.removeSsh, "${ButtonType.SSH_CRUD}${DELIMITER}2${DELIMITER}$database")
+        }
+        row {
+            dataButton(ConstantsString.updateSsh, "${ButtonType.SSH_CRUD}${DELIMITER}3${DELIMITER}$database")
+        }
+        row {
+            dataButton(ConstantsString.executeSsh, "${ButtonType.SSH_CRUD}${DELIMITER}4${DELIMITER}$database")
+        }
+        row {
+            dataButton(ConstantsString.backBtn, "${ButtonType.BACK}$DELIMITER$database${DELIMITER}-1${DELIMITER}${ButtonType.SSH}")
         }
     }
 
@@ -241,6 +241,42 @@ object ConstantsKeyboards {
             }
         }
 
+    fun removeSshQuery(database: String, queries: List<String>) =
+        inlineKeyboard {
+            queries.forEach {
+                row {
+                    dataButton(it, join(ButtonType.SSH_DELETE.name, database, it))
+                }
+            }
+            row {
+                dataButton(ConstantsString.backBtn, join(ButtonType.BACK.name, database, "-1", ButtonType.SSH_CRUD.name))
+            }
+        }
+
+    fun updateSshQuery(database: String, queries: List<String>) =
+        inlineKeyboard {
+            queries.forEach {
+                row {
+                    dataButton(it, join(ButtonType.SSH_UPDATE.name, database, it))
+                }
+            }
+            row {
+                dataButton(ConstantsString.backBtn, join(ButtonType.BACK.name, database, "-1", ButtonType.SSH_CRUD.name))
+            }
+        }
+
+    fun executeSshQuery(database: String, queries: List<String>) =
+        inlineKeyboard {
+            queries.forEach {
+                row {
+                    dataButton(it, join(ButtonType.SSH_EXECUTE.name, database, it))
+                }
+            }
+            row {
+                dataButton(ConstantsString.backBtn, join(ButtonType.BACK.name, database, "-1", ButtonType.SSH_CRUD.name))
+            }
+        }
+
     fun getQueriesKeyboard(database: String, queriesNames: List<String>) =
         inlineKeyboard {
             queriesNames.forEach {
@@ -273,7 +309,7 @@ enum class ButtonType {
     MEMORY, CHANGE_MEMORY, LINK,
     SELECT_QUERY,
     SELECT_QUERY_NAME,
-    SSH, SSH_CONNECTIONS
+    SSH, SSH_CRUD, SSH_DELETE, SSH_UPDATE, SSH_EXECUTE
 }
 
 fun String.toButtonType() = ButtonType.valueOf(this)

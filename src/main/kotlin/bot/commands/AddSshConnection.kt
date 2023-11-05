@@ -1,6 +1,6 @@
 package bot.commands
 
-import bot.CommandWithData
+import bot.CommandWithDataDataBase
 import bot.constants.ConstantsKeyboards
 import data.Api
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
@@ -12,8 +12,8 @@ import kotlinx.coroutines.flow.first
 
 class AddSshConnection(
     private val api: Api
-) : CommandWithData {
-    override suspend fun BehaviourContext.process(data: MessageDataCallbackQuery) {
+) : CommandWithDataDataBase {
+    override suspend fun BehaviourContext.process(data: MessageDataCallbackQuery, database: String) {
         val ip = waitText(
             SendTextMessage(
                 data.message.chat.id,
@@ -39,12 +39,6 @@ class AddSshConnection(
 
                 )
         ).first().text
-        val credentialId = waitText(
-            SendTextMessage(
-                data.message.chat.id,
-                "Введите username для подключения к базе данных",
-            )
-        ).first().text
         sendTextMessage(data.message.chat.id, "Подождите, пробуем получить доступ...")
         api.addSshConnection(
             userId = data.message.chat.id.chatId,
@@ -52,16 +46,13 @@ class AddSshConnection(
             port = port,
             username = username,
             password = password,
-            credentialId = credentialId.toLong()
+            database = database
         ).fold(
-            // TODO  добавить параметры
             onSuccess = {
                 sendTextMessage(
                     data.message.chat.id,
                     "Доступ успешно получен",
-                    replyMarkup = ConstantsKeyboards.sshConnections(
-                        api.getSshConnections(data.message.chat.id.chatId).fold(onSuccess = { it.map { it } }, onFailure = { listOf() })
-                    )
+                    replyMarkup = ConstantsKeyboards.getSsh(database)
                 )
             },
             onFailure = {
