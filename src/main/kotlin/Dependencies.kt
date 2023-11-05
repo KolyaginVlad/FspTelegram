@@ -69,7 +69,7 @@ object Dependencies {
 
         bindSingleton { SelectQueryCommandsProcess(instance()) }
 
-        bindSingleton { ProcessQueryCommandProcess(instance(), instance()) }
+        bindSingleton { ProcessQueryCommandProcess(instance()) }
 
         bindSingleton { AddQueryCommandProcess(instance()) }
 

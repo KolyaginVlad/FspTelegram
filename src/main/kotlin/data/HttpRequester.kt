@@ -181,6 +181,24 @@ class HttpRequester(private val client: HttpClient) : Api {
         }
     }
 
+    override suspend fun getQueries(userId: Long, database: String): Result<List<String>> {
+        println("getSshQueries $userId $database")
+        val response = runCatching {
+            client.get("${BASE_URL}Query/$userId/$database") {
+                contentType(ContentType.Application.Json)
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrNull()
+        println("getSshQueries ${response?.status?.value}")
+        println(response?.body<String>())
+        return if (response?.status?.value in 200..299 && response != null) {
+            Result.success(response.body<List<SshQueryImportDto>>().map { it.queryName })
+        } else {
+            Result.failure(Exception())
+        }
+    }
+
     override suspend fun createQuery(name: String, query: String, chatId: Long, database: String): Result<Unit> {
         println("createQuery $name $query $chatId $database")
         val response = runCatching {
@@ -307,12 +325,14 @@ class HttpRequester(private val client: HttpClient) : Api {
         password: String,
         database: String
     ): Result<Unit> {
-        println("${BASE_URL}Ssh/new-connection userId = $userId,\n" +
-                "                        port = $port,\n" +
-                "                        ip = $ip,\n" +
-                "                        database = $database,\n " +
-                "                        username = $username,\n" +
-                "                        password = $password")
+        println(
+            "${BASE_URL}Ssh/new-connection userId = $userId,\n" +
+                    "                        port = $port,\n" +
+                    "                        ip = $ip,\n" +
+                    "                        database = $database,\n " +
+                    "                        username = $username,\n" +
+                    "                        password = $password"
+        )
         val response = runCatching {
             client.post("${BASE_URL}Ssh/new-connection") {
                 contentType(ContentType.Application.Json)
@@ -391,11 +411,30 @@ class HttpRequester(private val client: HttpClient) : Api {
         }
     }
 
+    override suspend fun executeQuery(chatId: Long, database: String, sql: String): Result<Unit> {
+        println("executeQuery $sql $chatId $database")
+        val response = runCatching {
+            client.post("${BASE_URL}Query/execute") {
+                contentType(ContentType.Application.Json)
+                setBody(ExecuteQueryExportDto(sql, chatId, database))
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrNull()
+        println("executeQuery ${response?.status?.value}")
+        return if (response?.status?.value in 200..299 && response != null) {
+            Result.success(Unit)
+        } else {
+            Result.failure(Exception())
+        }
+    }
+
     override suspend fun executeSshQuery(chatId: Long, database: String, name: String): Result<Unit> {
         println("executeSshQuery $name $chatId $database")
         val response = runCatching {
-            client.post("${BASE_URL}Ssh/execute-query/$chatId/$database/$name") {
+            client.post("${BASE_URL}Ssh/execute") {
                 contentType(ContentType.Application.Json)
+                setBody(ExecuteSshQueryExportDto(name, chatId, database))
             }
         }.onFailure {
             it.printStackTrace()

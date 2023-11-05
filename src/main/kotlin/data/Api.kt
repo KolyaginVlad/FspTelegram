@@ -56,6 +56,8 @@ interface Api {
 
     suspend fun getSshQueries(userId: Long, database: String): Result<List<String>>
 
+    suspend fun getQueries(userId: Long, database: String): Result<List<String>>
+
     suspend fun createQuery(name: String, query: String, chatId: Long, database: String): Result<Unit>
 
     suspend fun createSshQuery(name: String, query: String, chatId: Long, database: String): Result<Unit>
@@ -73,6 +75,8 @@ interface Api {
     suspend fun removeSshQuery(chatId: Long, database: String, name: String): Result<Unit>
     suspend fun updateSshQuery(chatId: Long, database: String, name: String, newValue: String): Result<Unit>
     suspend fun executeSshQuery(chatId: Long, database: String, name: String): Result<Unit>
+
+    suspend fun executeQuery(chatId: Long, database: String, sql: String): Result<Unit>
 }
 
 
