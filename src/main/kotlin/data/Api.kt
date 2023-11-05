@@ -61,7 +61,13 @@ interface Api {
     suspend fun getQueryByName(name: String, chatId: Long, database: String): Result<String>
 
     suspend fun sendCustomQuery(query: String, userId: Long, database: String): Result<Unit>
+    suspend fun sshDiskSpace(userId: Long): Result<Unit>
 
+    suspend fun sshLsof(userId: Long): Result<Unit>
+
+    suspend fun sshTcpdump(userId: Long): Result<Unit>
+    suspend fun addSshConnection(userId: Long,ip: String, port: String, username: String, password: String, credentialId: Long): Result<Unit> //TODO передавать id
+    suspend fun getSshConnections(userId: Long): Result<List<String>>
 }
 
 

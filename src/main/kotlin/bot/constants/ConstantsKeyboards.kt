@@ -16,6 +16,22 @@ object ConstantsKeyboards {
             }
         }
     )
+
+    fun sshConnections(connections: List<String>) = inlineKeyboard {
+        connections.forEach {
+            row {
+                dataButton(it, "${ButtonType.SSH_CONNECTIONS}${DELIMITER}1${DELIMITER}${it}")
+            }
+        }
+        row {
+            dataButton(ConstantsString.addSshConnection, "${ButtonType.SSH_CONNECTIONS}${DELIMITER}0${DELIMITER}$")
+        }
+        row {
+            dataButton(ConstantsString.backBtn, "${ButtonType.BACK}${DELIMITER}-1$${DELIMITER}${ButtonType.MEMORY}")
+        }
+
+    }
+
     fun getMemory(database: String) = inlineKeyboard {
         row {
             dataButton(ConstantsString.changeMemory, "${ButtonType.MEMORY}${DELIMITER}1${DELIMITER}${database}")
@@ -27,7 +43,8 @@ object ConstantsKeyboards {
             dataButton(ConstantsString.backBtn, "${ButtonType.BACK}${DELIMITER}-1${DELIMITER}${database}${DELIMITER}${ButtonType.MEMORY}")
         }
     }
-    fun getChangeMemory(database:String) = inlineKeyboard {
+
+    fun getChangeMemory(database: String) = inlineKeyboard {
         row {
             dataButton(ConstantsString.maintenanceWorkMemory, "${ButtonType.CHANGE_MEMORY}${DELIMITER}1${DELIMITER}${database}")
         }
@@ -41,10 +58,14 @@ object ConstantsKeyboards {
             dataButton(ConstantsString.effectiveCacheSize, "${ButtonType.CHANGE_MEMORY}${DELIMITER}4${DELIMITER}${database}")
         }
         row {
-            dataButton(ConstantsString.backBtn, "${ButtonType.BACK}${DELIMITER}-1${DELIMITER}${database}${DELIMITER}${ButtonType.CHANGE_MEMORY}")
+            dataButton(
+                ConstantsString.backBtn,
+                "${ButtonType.BACK}${DELIMITER}-1${DELIMITER}${database}${DELIMITER}${ButtonType.CHANGE_MEMORY}"
+            )
         }
     }
-    fun  getStop(dataBase:String) = inlineKeyboard {
+
+    fun getStop(dataBase: String) = inlineKeyboard {
         row {
             dataButton(ConstantsString.stopBtn, "${ButtonType.STOP_MONITORING}${DELIMITER}1${DELIMITER}$dataBase")
         }
@@ -65,6 +86,29 @@ object ConstantsKeyboards {
         }
     }
 
+    fun getSsh(connection: String) = inlineKeyboard {
+        row {
+            dataButton(ConstantsString.checkDisk, "${ButtonType.SSH}${DELIMITER}1${DELIMITER}$connection")
+        }
+        row {
+            dataButton(ConstantsString.lsof, "${ButtonType.SSH}${DELIMITER}2${DELIMITER}$connection")
+        }
+        row {
+            dataButton(ConstantsString.tcpdump, "${ButtonType.SSH}${DELIMITER}3${DELIMITER}$connection")
+        }
+        row {
+            dataButton(
+                ConstantsString.customSsh,
+                "${ButtonType.SSH}${DELIMITER}4${DELIMITER}$connection"
+            ) //TODO тут типа перходим на кнопки создания/удаления/запуска ssh
+        }
+        row {
+            dataButton(ConstantsString.addSsh, "${ButtonType.SSH}${DELIMITER}5${DELIMITER}$connection")
+        }
+        row {
+            dataButton(ConstantsString.backBtn, "${ButtonType.BACK}${DELIMITER}-1${DELIMITER}${ButtonType.SSH}")
+        }
+    }
 
     val onlyAddDatabase = inlineKeyboard {
         row { dataButton(ConstantsString.addDatabase, ButtonType.ADD_DB.toString()) }
@@ -118,6 +162,15 @@ object ConstantsKeyboards {
                 ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "9"
             )
         }
+
+        row {
+            dataButton(
+                ConstantsString.ssh,
+                ButtonType.DB_OPTIONS.toString() + DELIMITER + dataBase + DELIMITER + "11"
+
+            )
+        }
+
         row {
             dataButton(
                 ConstantsString.backBtn,
@@ -216,10 +269,11 @@ object ConstantsKeyboards {
 
 enum class ButtonType {
     SELECT_DATABASE_ADD, SELECT_DATABASE, DB_OPTIONS, BACK, MAIN_OPTIONS,
-    ADD_DB, COMMAND,  LOG_SETTINGS, REPAIR, STOP_MONITORING,
+    ADD_DB, COMMAND, LOG_SETTINGS, REPAIR, STOP_MONITORING,
     MEMORY, CHANGE_MEMORY, LINK,
     SELECT_QUERY,
     SELECT_QUERY_NAME,
+    SSH, SSH_CONNECTIONS
 }
 
 fun String.toButtonType() = ButtonType.valueOf(this)

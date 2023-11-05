@@ -31,12 +31,15 @@ class ProcessInlineButtons(private val api: Api) : Command {
     private val metrixCommand: MetrixCommand by Dependencies.di.instance()
     private val vacuumCommandProcess: VacuumCommandProcess by Dependencies.di.instance()
     private val getImageByLinkCommandProcess: GetImageByLinkCommandProcess by Dependencies.di.instance()
-    private val showMemoryCommandProcess: ShowMemoryCommandProcess by  Dependencies.di.instance()
+    private val showMemoryCommandProcess: ShowMemoryCommandProcess by Dependencies.di.instance()
     private val getLinksCommandProcess: GetLinksCommandProcess by Dependencies.di.instance()
     private val addLinkCommandProcess: AddLinkCommandProcess by Dependencies.di.instance()
     private val selectQueryCommandsProcess: SelectQueryCommandsProcess by Dependencies.di.instance()
     private val addQueryCommandProcess: AddQueryCommandProcess by Dependencies.di.instance()
     private val processQueryCommandProcess: ProcessQueryCommandProcess by Dependencies.di.instance()
+    private val sshCheckDiskCommandProcess: SshCheckDiskCommandProcess by Dependencies.di.instance()
+    private val sshLsofCommandProcess: SshLsofCommandProcess by Dependencies.di.instance()
+    private val sshTcpDumpCommandProcess: SshTcpDumpCommandProcess by Dependencies.di.instance()
 
     override suspend fun BehaviourContext.process() {
         onMessageDataCallbackQuery { message ->
@@ -53,6 +56,28 @@ class ProcessInlineButtons(private val api: Api) : Command {
                             "Выберите действие",
                             replyMarkup = ConstantsKeyboards.getDataBasesCommands(args[1])
                         )
+                    }
+
+                    ButtonType.SSH_CONNECTIONS -> {
+                        when (args[1]) {
+                            "0"->{}
+                            else -> {
+                                sendTextMessage(
+                                    message.message.chat.id,
+                                    "Выберите действие",
+                                    replyMarkup = ConstantsKeyboards.getSsh(args[1])
+                                )
+                            }
+                        }
+                    }
+
+                    ButtonType.SSH -> {
+                        when (args.last()) {
+                            "1" -> sshCheckDiskCommandProcess.start(this, message,args.last())
+                            "2" -> sshLsofCommandProcess.start(this, message,args.last())
+                            "3" -> sshTcpDumpCommandProcess.start(this, message,args.last())
+                            "0" -> TODO() //добавить SSh
+                        }
                     }
 
                     ButtonType.STOP_MONITORING -> {
@@ -81,7 +106,7 @@ class ProcessInlineButtons(private val api: Api) : Command {
                         }
                     }
 
-                    ButtonType.BACK -> BACK(args.last(), this, message, args[args.lastIndex-1])
+                    ButtonType.BACK -> BACK(args.last(), this, message, args[args.lastIndex - 1])
                     ButtonType.MAIN_OPTIONS -> TODO()
                     ButtonType.ADD_DB -> sendTextMessage(
                         message.message.chat,
@@ -101,16 +126,19 @@ class ProcessInlineButtons(private val api: Api) : Command {
                                 replyMarkup = ConstantsKeyboards.getDataBasesCommands(args[2])
                             )
                         }
+
                         args[1] == "-2" -> {
                             addLinkCommandProcess.start(this, message, args[2])
                         }
+
                         else -> {
                             getImageByLinkCommandProcess.start(this, message, args[2])
                         }
                     }
+
                     ButtonType.MEMORY -> when (args[1]) {
                         "1" -> {
-                             sendTextMessage(
+                            sendTextMessage(
                                 message.message.chat.id,
                                 "Выберите какой параметр хотите изменить",
                                 replyMarkup = ConstantsKeyboards.getChangeMemory(args.last())
@@ -185,6 +213,25 @@ class ProcessInlineButtons(private val api: Api) : Command {
                 )
             }
 
+            "11" -> {
+                api.getSshConnections(message.message.chat.id.chatId).fold(
+                    onSuccess = {
+                        context.sendTextMessage(
+                            message.message.chat.id,
+                            "Выберите соединение",
+                            replyMarkup = ConstantsKeyboards.sshConnections(it)
+                        )
+                    },
+                    onFailure = {
+                        context.sendTextMessage(
+                            message.message.chat.id,
+                            "Не удалось выполнить запрос",
+                            replyMarkup = ConstantsKeyboards.getDataBasesCommands(database)
+                        )
+                    }
+                )
+            }
+
             "8" -> getLinksCommandProcess.start(context, message, database)
             else -> {}
         }
@@ -206,13 +253,15 @@ class ProcessInlineButtons(private val api: Api) : Command {
                     replyMarkup = ConstantsKeyboards.getMemory(database)
                 )
             }
-            "MEMORY"->{
+
+            "MEMORY" -> {
                 context.sendTextMessage(
                     message.message.chat.id,
                     "Выберите действие",
                     replyMarkup = ConstantsKeyboards.getDataBasesCommands(database)
                 )
             }
+
             else -> {
                 context.sendTextMessage(
                     message.message.chat.id,

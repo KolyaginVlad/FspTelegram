@@ -232,6 +232,91 @@ class HttpRequester(private val client: HttpClient) : Api {
         }
     }
 
+    override suspend fun sshDiskSpace(userId: Long): Result<Unit> {
+        val response = runCatching {
+            client.get("${BASE_URL}Ssh/check-disk-space/$userId") {
+                contentType(ContentType.Application.Json)
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrNull()
+        println("getQueryByName ${response?.status?.value}")
+        return if (response?.status?.value in 200..299 && response != null) {
+            Result.success(Unit)
+        } else {
+            Result.failure(Exception())
+        }
+    }
+
+    override suspend fun sshLsof(userId: Long): Result<Unit> {
+        val response = runCatching {
+            client.get("${BASE_URL}Ssh/lsof/$userId") {
+                contentType(ContentType.Application.Json)
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrNull()
+        println("getQueryByName ${response?.status?.value}")
+        return if (response?.status?.value in 200..299 && response != null) {
+            Result.success(Unit)
+        } else {
+            Result.failure(Exception())
+        }
+    }
+
+    override suspend fun sshTcpdump(userId: Long): Result<Unit> {
+        val response = runCatching {
+            client.get("${BASE_URL}Ssh/tcpdump/$userId") {
+                contentType(ContentType.Application.Json)
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrNull()
+        println("getQueryByName ${response?.status?.value}")
+        return if (response?.status?.value in 200..299 && response != null) {
+            Result.success(Unit)
+        } else {
+            Result.failure(Exception())
+        }
+    }
+
+    override suspend fun addSshConnection(
+        userId: Long,
+        ip: String,
+        port: String,
+        username: String,
+        password: String,
+        credentialId: Long
+    ): Result<Unit> {
+        val response = runCatching {
+            client.post("${BASE_URL}Ssh/new-connection") {
+                contentType(ContentType.Application.Json)
+                setBody(
+                    ConnectionDto(
+                        userId = userId, //TODO может не сюда
+                        credentialId = credentialId,
+                        port = port,
+                        ip = ip,
+                        username = username,
+                        password = password
+                    )
+                )
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrNull()
+        println("addSshConnection ${response?.status?.value}")
+        return if (response?.status?.value in 200..299 && response != null && response.body<Boolean>()) {
+            Result.success(Unit)
+        } else {
+            Result.failure(Exception())
+        }
+    }
+
+    override suspend fun getSshConnections(userId: Long): Result<List<String>> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun visual(userId: Long, database: String, link: String): Result<String> {
         println("${BASE_URL}Visual/$userId/$database/$link")
         val response = runCatching {

@@ -27,6 +27,12 @@ object Dependencies {
 
         bindSingleton { KillTransactionCommandProcess(instance()) }
 
+        bindSingleton { SshCheckDiskCommandProcess(instance()) }
+
+        bindSingleton { SshLsofCommandProcess(instance()) }
+
+        bindSingleton { SshTcpDumpCommandProcess(instance()) }
+
         bindSingleton { StartCommandProcess(instance()) }
 
         bindSingleton { CheckPointCommandProcess(instance()) }

@@ -35,4 +35,11 @@ object ConstantsString {
     const val workMemory = "Рабочая память"
     const val memoryLimit = "Лимит памяти"
     const val showMemory = "Показать параметры памяти"
+    const val checkDisk = "check-disk-space"
+    const val lsof = "lsof"
+    const val tcpdump = "tcpdump"
+    const val customSsh = "customSsh"
+    const val addSsh = "Добавить ssh скрипт"
+    const val ssh = "Ssh скрипты"
+    const val addSshConnection = "Добавить новое подключение"
 }
